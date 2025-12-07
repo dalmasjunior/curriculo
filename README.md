@@ -1,61 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+[![Netlify Status](https://api.netlify.com/api/v1/badges/e2422e7d-1c42-4c8d-acda-0508bbda1fa3/deploy-status)](https://app.netlify.com/projects/curriculo-ats-free/deploys)
 
-## Getting Started
+# Gerador de Currículos ATS
 
-First, run the development server:
+Um gerador de currículos gratuito e open-source que cria currículos profissionais compatíveis com sistemas ATS (Applicant Tracking Systems).
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 📋 Sobre o Projeto
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Este projeto foi desenvolvido para ajudar profissionais a criarem currículos otimizados que sejam facilmente lidos e processados pelos sistemas ATS usados pelas empresas durante o processo de recrutamento.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### ✨ Principais Funcionalidades
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Criação de Currículos**: Interface intuitiva para preencher informações profissionais
+- **Múltiplos Modelos**: Diferentes templates de currículo disponíveis
+- **Compatibilidade ATS**: Currículos otimizados para passar pela triagem automática
+- **Geração de PDF**: Exporte seu currículo em formato PDF profissional
+- **Modelos Customizáveis**: Sistema flexível que permite criar novos modelos de currículo
+- **Editor de Modelos**: Interface para criar e contribuir com novos templates via Pull Request
 
-## Configuração do GitHub API
+### 🎯 Objetivo
 
-Para que a funcionalidade de criar novos modelos via Pull Request funcione, você precisa configurar as seguintes variáveis de ambiente no arquivo `.env.local`:
+Aumentar as chances dos candidatos passarem pela triagem inicial dos sistemas ATS, chegando até os recrutadores humanos. Tudo isso de forma completamente gratuita e sem complicações.
 
-```env
-# Token do GitHub com permissões para criar branches, commits e PRs
-# Crie um Personal Access Token em: https://github.com/settings/tokens
-# Permissões necessárias: repo (acesso completo ao repositório)
-GITHUB_TOKEN=your_github_token_here
+## 🚀 Tecnologias Utilizadas
 
-# Informações do repositório (opcional, usa valores padrão se não especificado)
-GITHUB_REPO_OWNER=dalmasjunior
-GITHUB_REPO_NAME=curriculo
-GITHUB_BASE_BRANCH=main
-```
+- **Next.js 16** - Framework React para aplicações web
+- **TypeScript** - Tipagem estática para JavaScript
+- **Tailwind CSS** - Framework CSS utilitário
+- **Puppeteer** - Geração de PDFs
+- **Marked** - Processamento de Markdown
 
-### Como criar um Personal Access Token no GitHub:
+## 📚 Documentação
 
-1. Acesse [GitHub Settings > Developer settings > Personal access tokens > Tokens (classic)](https://github.com/settings/tokens)
-2. Clique em "Generate new token (classic)"
-3. Dê um nome descritivo (ex: "Curriculo App PR Creator")
-4. Selecione a permissão `repo` (acesso completo ao repositório)
-5. Clique em "Generate token"
-6. Copie o token e adicione no arquivo `.env.local`
+- [Guia de Instalação](./INSTALL.md) - Como configurar e executar o projeto localmente
+- [Guia de Contribuição](./CONTRIBUTING.md) - Como contribuir com o projeto
 
-## Learn More
+## 🌟 Contribuindo
 
-To learn more about Next.js, take a look at the following resources:
+Contribuições são bem-vindas! Se você tem uma ideia para melhorar o projeto ou quer adicionar um novo modelo de currículo, confira nosso [guia de contribuição](./CONTRIBUTING.md).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📄 Licença
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Este projeto é open-source e está disponível gratuitamente para uso.
 
-## Deploy on Vercel
+## 🙏 Agradecimentos
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Agradecemos a todos os contribuidores que ajudam a tornar este projeto melhor!
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+⭐ Se este projeto foi útil para você, considere dar uma estrela no GitHub!
