@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica', 'Arial', sans-serif;
       line-height: 1.5;
-      color: #24292f;
+      color: #000000;
       font-size: 16px;
       max-width: 800px;
       margin: 0 auto;
@@ -47,26 +47,27 @@ export async function POST(request: NextRequest) {
     h1 {
       font-size: 2em;
       font-weight: 600;
-      color: #24292f;
-      margin: 0.67em 0;
-      padding-bottom: 0.3em;
-      border-bottom: 1px solid hsla(210, 18%, 87%, 1);
+      color: #000000;
+      margin: 0.67em 0 0.3em 0;
+      padding-bottom: 0;
+      border-bottom: none;
       line-height: 1.25;
     }
     h2 {
       font-size: 1.5em;
       font-weight: 600;
-      color: #24292f;
+      color: #000000;
       margin-top: 24px;
       margin-bottom: 16px;
       padding-bottom: 0.3em;
-      border-bottom: 1px solid hsla(210, 18%, 87%, 1);
+      border-bottom: 1px solid #000000;
       line-height: 1.25;
+      text-transform: uppercase;
     }
     h3 {
       font-size: 1.25em;
       font-weight: 600;
-      color: #24292f;
+      color: #000000;
       margin-top: 24px;
       margin-bottom: 16px;
       line-height: 1.25;
@@ -76,29 +77,33 @@ export async function POST(request: NextRequest) {
       margin-bottom: 10px;
       line-height: 1.5;
       font-size: 16px;
-      color: #24292f;
+      color: #000000;
     }
     strong {
       font-weight: 600;
-      color: #24292f;
+      color: #000000;
     }
     hr {
       box-sizing: content-box;
       overflow: hidden;
       background: transparent;
-      border-bottom: 1px solid hsla(210, 18%, 87%, 1);
-      height: 0.25em;
+      border-bottom: 1px solid #000000;
+      height: 0;
       padding: 0;
       margin: 24px 0;
-      background-color: #d0d7de;
       border: 0;
+      border-top: 1px solid #000000;
     }
     a {
-      color: #0969da;
+      color: #000000;
       text-decoration: none;
     }
     a:hover {
       text-decoration: underline;
+      color: #000000;
+    }
+    a:visited {
+      color: #000000;
     }
     ul {
       margin-top: 0;
