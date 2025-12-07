@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { marked } from 'marked';
-import puppeteer from 'puppeteer';
 
 export async function POST(request: NextRequest) {
-  let browser;
-  
   try {
     const { markdown } = await request.json();
 
@@ -161,31 +158,34 @@ export async function POST(request: NextRequest) {
 </html>
     `;
 
-    // Gerar PDF usando Puppeteer
-    browser = await puppeteer.launch({
-      headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
-    });
-
-    const page = await browser.newPage();
-    await page.setContent(fullHtml, { waitUntil: 'networkidle0' });
-
-    // Gerar PDF
-    const pdf = await page.pdf({
-      format: 'A4',
-      margin: {
-        top: '20mm',
-        right: '20mm',
-        bottom: '20mm',
-        left: '20mm',
+    // Enviar HTML para o serviço externo markdowntopdf.com
+    const response = await fetch('https://www.markdowntopdf.com/api/guest/download', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
-      printBackground: true,
+      body: JSON.stringify({
+        html: fullHtml,
+      }),
     });
 
-    await browser.close();
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Erro ao gerar PDF no serviço externo:', response.status, errorText);
+      return NextResponse.json(
+        { 
+          error: 'Erro ao gerar PDF no serviço externo', 
+          details: `Status: ${response.status}, ${errorText}` 
+        },
+        { status: 500 }
+      );
+    }
+
+    // Obter o PDF como buffer
+    const pdfBuffer = await response.arrayBuffer();
 
     // Retornar PDF como resposta
-    return new NextResponse(pdf as unknown as BodyInit, {
+    return new NextResponse(pdfBuffer, {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
@@ -195,11 +195,11 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Erro ao gerar PDF:', error);
-    if (browser) {
-      await browser.close();
-    }
     return NextResponse.json(
-      { error: 'Erro ao gerar PDF', details: error instanceof Error ? error.message : 'Erro desconhecido' },
+      { 
+        error: 'Erro ao gerar PDF', 
+        details: error instanceof Error ? error.message : 'Erro desconhecido' 
+      },
       { status: 500 }
     );
   }
