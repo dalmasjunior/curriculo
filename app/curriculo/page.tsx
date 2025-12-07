@@ -158,87 +158,8 @@ export default function CurriculoPage() {
   };
 
   useEffect(() => {
-    // Verificar se há modelo selecionado no sessionStorage
-    const savedModel = sessionStorage.getItem('selectedModel');
-    if (savedModel) {
-      try {
-        const model = JSON.parse(savedModel);
-        setSelectedModel(model);
-        setIsModalOpen(false);
-        
-        // Carregar template do modelo (JSON e Markdown)
-        const jsonPromise = fetch(`/models/${model.file}`).then(res => {
-          if (!res.ok) throw new Error(`Erro ao carregar ${model.file}`);
-          return res.json();
-        });
-        
-        const mdFile = model.file.replace('.json', '.md');
-        const mdPromise = fetch(`/models/${mdFile}`).then(res => {
-          if (!res.ok) {
-            console.warn(`Arquivo markdown ${mdFile} não encontrado, usando template padrão`);
-            // Retornar template padrão se não encontrar o arquivo
-            return `# {{name}}
-{{headline}}
-{{location}}
-Email: {{email}}
-Phone: {{phone}}
-LinkedIn: {{linkedin}}
-GitHub: {{github}}
-
----
-
-## Summary
-{{summary}}
-
----
-
-## Core Skills
-{{skills_languages}}
-{{skills_frameworks}}
-{{skills_cloud}}
-{{skills_observability}}
-
----
-
-## Experience
-
-### {{exp1_company}} — {{exp1_role}}
-{{exp1_location}} — {{exp1_period}}
-{{exp1_description}}
-
----
-
-### {{exp2_company}} — {{exp2_role}}
-{{exp2_location}} — {{exp2_period}}
-{{exp2_description}}
-
----
-
-## Education
-{{education}}`;
-          }
-          return res.text();
-        });
-        
-        Promise.all([jsonPromise, mdPromise])
-          .then(([template, mdTemplate]) => {
-            console.log('Template carregado:', template);
-            console.log('Markdown template carregado:', mdTemplate.substring(0, 100));
-            setModelTemplate(template);
-            setMarkdownTemplate(mdTemplate);
-            initializeFormData(template);
-          })
-          .catch((err) => {
-            console.error('Erro ao carregar modelo:', err);
-            alert(`Erro ao carregar modelo: ${err.message}. Verifique se os arquivos existem.`);
-          });
-      } catch (e) {
-        console.error('Erro ao restaurar modelo:', e);
-      }
-    } else {
-      // Se não há modelo selecionado, abrir modal
-      setIsModalOpen(true);
-    }
+    // Sempre abrir modal de seleção ao entrar na página
+    setIsModalOpen(true);
 
     // Carregar lista de modelos
     fetch('/models/list.json')
@@ -256,8 +177,6 @@ GitHub: {{github}}
   const handleSelectModel = (model: Model) => {
     setSelectedModel(model);
     setIsModalOpen(false);
-    // Salvar modelo no sessionStorage para persistir após reload
-    sessionStorage.setItem('selectedModel', JSON.stringify(model));
     
     // Carregar template do modelo (JSON e Markdown)
     const jsonPromise = fetch(`/models/${model.file}`).then(res => {
@@ -337,6 +256,18 @@ GitHub: {{github}}
 
   const handleCancelExit = () => {
     setShowConfirmModal(false);
+  };
+
+  const handleChangeModel = () => {
+    // Limpar dados do formulário e modelo atual
+    setFormData({});
+    setModelTemplate(null);
+    setMarkdownTemplate('');
+    setSelectedModel(null);
+    setShowPreview(false);
+    setMarkdownContent('');
+    // Abrir modal de seleção
+    setIsModalOpen(true);
   };
 
   const generateMarkdown = () => {
@@ -846,10 +777,55 @@ GitHub: {{github}}
         {selectedModel && (
           <div className="max-w-4xl mx-auto">
             <div className="bg-gray-50 rounded-xl p-6 mb-6">
-              <h1 className="text-3xl font-bold text-[#0033A0] mb-2">
-                Modelo: {selectedModel.name}
-              </h1>
-              <p className="text-gray-600">{selectedModel.description}</p>
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <h1 className="text-3xl font-bold text-[#0033A0] mb-2">
+                    Modelo: {selectedModel.name}
+                  </h1>
+                  <p className="text-gray-600 mb-4">{selectedModel.description}</p>
+                  
+                  {/* Informações do Criador */}
+                  <div className="flex items-center gap-4 text-sm text-gray-600 pt-4 border-t border-gray-200">
+                    <div className="flex items-center gap-2">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      </svg>
+                      <span className="font-medium">Criado por:</span>
+                      {selectedModel.creator_url && selectedModel.creator_url.trim() !== '' ? (
+                        <a
+                          href={selectedModel.creator_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[#0033A0] hover:underline font-medium flex items-center gap-1"
+                        >
+                          {selectedModel.created_by}
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          </svg>
+                        </a>
+                      ) : (
+                        <span className="font-medium">{selectedModel.created_by}</span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      <span>{new Date(selectedModel.created_at + 'T00:00:00').toLocaleDateString('pt-BR')}</span>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={handleChangeModel}
+                  className="ml-4 px-4 py-2 bg-white border border-[#0033A0] text-[#0033A0] rounded-lg hover:bg-[#0033A0] hover:text-white transition-colors font-medium flex items-center gap-2"
+                  title="Trocar modelo"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                  </svg>
+                  Trocar Modelo
+                </button>
+              </div>
             </div>
             {/* Formulário do currículo */}
             {modelTemplate && (() => {
