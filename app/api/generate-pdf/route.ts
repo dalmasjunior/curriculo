@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import type { TDocumentDefinitions } from 'pdfmake/interfaces';
+import { marked } from 'marked';
+import puppeteer from 'puppeteer';
 
 export async function POST(request: NextRequest) {
+  let browser;
+  
   try {
     const { markdown } = await request.json();
 
@@ -12,89 +15,155 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Dynamic import para evitar problemas no build do Next.js
-    const { mdpdfmake } = await import('mdpdfmake');
-    const PdfPrinter = (await import('pdfmake')).default;
+    // Converter markdown para HTML
+    const html = await marked(markdown);
 
-    // Converter markdown para definição de documento do pdfmake
-    const docDefinition = await mdpdfmake(markdown, {
-      headingFontSizes: [24, 13, 11], // Tamanhos de fonte para h1, h2, h3
-      headingUnderline: true, // Sublinhar títulos
+    // HTML completo com estilos para PDF (formato profissional, tudo em preto)
+    const fullHtml = `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+      line-height: 1.5;
+      color: #000000;
+      font-size: 11pt;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20mm 15mm;
+    }
+    h1 {
+      font-size: 24pt;
+      font-weight: 600;
+      color: #000000;
+      margin-bottom: 4pt;
+      margin-top: 0;
+      line-height: 1.2;
+    }
+    h2 {
+      font-size: 13pt;
+      font-weight: 600;
+      color: #000000;
+      margin-top: 16pt;
+      margin-bottom: 8pt;
+      text-transform: uppercase;
+      letter-spacing: 0.5pt;
+      border-bottom: 1px solid #000000;
+      padding-bottom: 2pt;
+    }
+    h3 {
+      font-size: 11pt;
+      font-weight: 600;
+      margin-top: 12pt;
+      margin-bottom: 4pt;
+      color: #000000;
+    }
+    p {
+      margin-bottom: 6pt;
+      line-height: 1.5;
+      font-size: 11pt;
+      color: #000000;
+    }
+    strong {
+      font-weight: 600;
+      color: #000000;
+    }
+    hr {
+      border: none;
+      border-top: 0.5pt solid #000000;
+      margin: 12pt 0;
+    }
+    a {
+      color: #000000;
+      text-decoration: none;
+    }
+    ul {
+      margin-left: 20pt;
+      margin-bottom: 6pt;
+      color: #000000;
+    }
+    li {
+      margin-bottom: 3pt;
+      line-height: 1.5;
+      color: #000000;
+    }
+    /* Estilo para informações de contato no topo */
+    body > h1 + p,
+    body > h1 + p + p {
+      font-size: 10pt;
+      margin-bottom: 2pt;
+      line-height: 1.4;
+    }
+    /* Espaçamento entre seções */
+    h2 + p,
+    h2 + h3 {
+      margin-top: 8pt;
+    }
+    /* Experiências */
+    h3 + p {
+      font-size: 10pt;
+      margin-bottom: 4pt;
+      color: #000000;
+    }
+    h3 + p + p {
+      margin-top: 4pt;
+      margin-bottom: 8pt;
+    }
+    @media print {
+      body {
+        padding: 15mm;
+      }
+      h2 {
+        page-break-after: avoid;
+        margin-top: 12pt;
+      }
+      h3 {
+        page-break-after: avoid;
+      }
+      h2 + h3 {
+        page-break-before: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  ${html}
+</body>
+</html>
+    `;
+
+    // Gerar PDF usando Puppeteer
+    browser = await puppeteer.launch({
+      headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
     });
 
-    // Configurar estilos personalizados para o PDF (tudo em preto)
-    const customDocDefinition: TDocumentDefinitions = {
-      ...docDefinition,
-      defaultStyle: {
-        font: 'Helvetica',
-        fontSize: 11,
-        color: '#000000',
-        lineHeight: 1.5,
-      },
-      styles: {
-        h1: {
-          fontSize: 24,
-          bold: true,
-          color: '#000000',
-          marginBottom: 4,
-          marginTop: 0,
-        },
-        h2: {
-          fontSize: 13,
-          bold: true,
-          color: '#000000',
-          marginTop: 16,
-          marginBottom: 8,
-          decoration: 'underline',
-        },
-        h3: {
-          fontSize: 11,
-          bold: true,
-          color: '#000000',
-          marginTop: 12,
-          marginBottom: 4,
-        },
-        p: {
-          fontSize: 11,
-          color: '#000000',
-          marginBottom: 6,
-          lineHeight: 1.5,
-        },
-        strong: {
-          bold: true,
-          color: '#000000',
-        },
-        link: {
-          color: '#000000',
-        },
-      },
-      pageSize: 'A4',
-      pageMargins: [20, 20, 20, 20], // [left, top, right, bottom] em mm
-    };
-
-    // Configurar fontes do pdfmake
-    // Usar fontes padrão do PDF (Helvetica) que não requerem arquivos
-    const printer = new PdfPrinter({});
+    const page = await browser.newPage();
+    await page.setContent(fullHtml, { waitUntil: 'networkidle0' });
 
     // Gerar PDF
-    const pdfDoc = printer.createPdfKitDocument(customDocDefinition);
-    
-    // Converter para buffer
-    const chunks: Buffer[] = [];
-    pdfDoc.on('data', (chunk: Buffer) => {
-      chunks.push(chunk);
+    const pdf = await page.pdf({
+      format: 'A4',
+      margin: {
+        top: '20mm',
+        right: '20mm',
+        bottom: '20mm',
+        left: '20mm',
+      },
+      printBackground: true,
     });
 
-    const pdfBuffer = await new Promise<Buffer>((resolve, reject) => {
-      pdfDoc.on('end', () => {
-        resolve(Buffer.concat(chunks));
-      });
-      pdfDoc.on('error', reject);
-      pdfDoc.end();
-    });
+    await browser.close();
 
     // Retornar PDF como resposta
-    return new NextResponse(pdfBuffer as unknown as BodyInit, {
+    return new NextResponse(pdf as unknown as BodyInit, {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
@@ -104,15 +173,11 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Erro ao gerar PDF:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
-    const errorStack = error instanceof Error ? error.stack : undefined;
-    console.error('Stack trace:', errorStack);
+    if (browser) {
+      await browser.close();
+    }
     return NextResponse.json(
-      { 
-        error: 'Erro ao gerar PDF', 
-        details: errorMessage,
-        stack: process.env.NODE_ENV === 'development' ? errorStack : undefined
-      },
+      { error: 'Erro ao gerar PDF', details: error instanceof Error ? error.message : 'Erro desconhecido' },
       { status: 500 }
     );
   }
