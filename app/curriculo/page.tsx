@@ -1137,7 +1137,8 @@ GitHub: {{github}}
                   </div>
                 </form>
               </div>
-            )}
+            );
+            })()}
             
             {!modelTemplate && selectedModel && (
               <div className="bg-white border-2 border-gray-200 rounded-xl p-8">
