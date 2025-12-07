@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
 
     // Converter markdown para HTML
     const html = marked.parse(markdown);
-    console.log(html);
+    
     // HTML completo com estilos para PDF
     const fullHtml = `<!DOCTYPE html>
 <html>

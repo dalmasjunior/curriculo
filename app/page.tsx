@@ -49,7 +49,10 @@ export default function Home() {
             </div>
           </a>
 
-          <button className="group relative bg-white border-2 border-[#0033A0] text-[#0033A0] rounded-xl px-8 py-12 shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-[#0033A0] hover:text-white transform hover:-translate-y-1">
+          <a
+            href="/editor"
+            className="group relative bg-white border-2 border-[#0033A0] text-[#0033A0] rounded-xl px-8 py-12 shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-[#0033A0] hover:text-white transform hover:-translate-y-1 block"
+          >
             <div className="flex flex-col items-center gap-4">
               <div className="w-16 h-16 bg-[#0033A0]/10 rounded-full flex items-center justify-center group-hover:bg-white/20 group-hover:scale-110 transition-all">
                 <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -58,10 +61,10 @@ export default function Home() {
               </div>
               <h3 className="text-2xl font-bold">Novo Modelo</h3>
               <p className="text-sm opacity-90 group-hover:opacity-100">
-                Escolha um modelo de currículo
+                Crie um novo modelo de currículo
               </p>
             </div>
-          </button>
+          </a>
         </div>
 
         {/* Footer Info */}

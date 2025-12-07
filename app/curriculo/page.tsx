@@ -29,52 +29,128 @@ export default function CurriculoPage() {
   const [showPreview, setShowPreview] = useState(false);
   const [markdownContent, setMarkdownContent] = useState<string>('');
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
+  const [showStarRequest, setShowStarRequest] = useState(false);
+  const [isDownloadingFromPreview, setIsDownloadingFromPreview] = useState(false);
+
+  // Função para determinar o tipo de input baseado no nome do campo
+  const getInputType = (fieldName: string, fieldValue: any): 'input' | 'textarea' => {
+    // Campos que sempre devem ser textarea
+    const textareaFields = ['summary', 'description', 'education', 'content', 'bio', 'about'];
+    
+    // Verifica se o nome do campo contém palavras-chave de textarea
+    const lowerName = fieldName.toLowerCase();
+    if (textareaFields.some(field => lowerName.includes(field))) {
+      return 'textarea';
+    }
+    
+    // Se o valor é uma string e contém quebras de linha ou é muito longo, usar textarea
+    if (typeof fieldValue === 'string' && (fieldValue.includes('\n') || fieldValue.length > 100)) {
+      return 'textarea';
+    }
+    
+    // Por padrão, usar input simples
+    return 'input';
+  };
+
+  // Função para processar o template e retornar campos ordenados
+  const processTemplate = (template: any) => {
+    const fields: Array<{
+      key: string;
+      type: 'string' | 'object' | 'array';
+      inputType?: 'input' | 'textarea';
+      value: any;
+      path: string[];
+    }> = [];
+
+    const processObject = (obj: any, path: string[] = []) => {
+      for (const [key, value] of Object.entries(obj)) {
+        const currentPath = [...path, key];
+        
+        if (typeof value === 'string') {
+          // Campo string simples
+          fields.push({
+            key,
+            type: 'string',
+            inputType: getInputType(key, value),
+            value,
+            path: currentPath,
+          });
+        } else if (typeof value === 'object' && value !== null) {
+          if (Array.isArray(value)) {
+            // Array (como experience)
+            fields.push({
+              key,
+              type: 'array',
+              value,
+              path: currentPath,
+            });
+          } else {
+            // Objeto (como contact, skills)
+            fields.push({
+              key,
+              type: 'object',
+              value,
+              path: currentPath,
+            });
+            // Processar recursivamente os campos do objeto
+            processObject(value, currentPath);
+          }
+        }
+      }
+    };
+
+    processObject(template);
+    return fields;
+  };
 
   const initializeFormData = (template: any) => {
     const data: any = {};
     
-    // Campos básicos (vazios)
-    if (template.name) data.name = '';
-    if (template.headline) data.headline = '';
-    if (template.location) data.location = '';
-    if (template.summary) data.summary = '';
-    if (template.education) data.education = '';
+    // Processar template para obter todos os campos
+    const fields = processTemplate(template);
     
-    // Contact (vazio)
-    if (template.contact) {
-      data.contact = {
-        email: '',
-        phone: '',
-        linkedin: '',
-        github: '',
-      };
-    }
-    
-    // Skills (vazio)
-    if (template.skills) {
-      data.skills = {};
-      Object.keys(template.skills).forEach((key) => {
-        data.skills[key] = '';
-      });
-    }
-    
-    // Experience (array vazio)
-    if (template.experience && Array.isArray(template.experience)) {
-      data.experience = template.experience.map(() => ({
-        company: '',
-        role: '',
-        location: '',
-        period: '',
-        description: '',
-      }));
-    }
-    
-    // Campos opcionais adicionais (vazios)
-    Object.keys(template).forEach((key) => {
-      if (!['name', 'headline', 'location', 'contact', 'summary', 'skills', 'experience', 'education'].includes(key)) {
-        if (typeof template[key] === 'string') {
-          data[key] = '';
+    // Inicializar campos básicos
+    fields.forEach(field => {
+      if (field.type === 'string') {
+        // Campos simples na raiz
+        if (field.path.length === 1) {
+          data[field.key] = '';
         }
+      } else if (field.type === 'object' && field.path.length === 1) {
+        // Objetos na raiz (contact, skills)
+        if (field.key === 'contact') {
+          data.contact = {
+            email: '',
+            phone: '',
+            linkedin: '',
+            github: '',
+          };
+        } else if (field.key === 'skills') {
+          data.skills = {};
+          if (field.value && typeof field.value === 'object') {
+            Object.keys(field.value).forEach((key) => {
+              data.skills[key] = '';
+            });
+          }
+        }
+      } else if (field.type === 'array' && field.path.length === 1) {
+        // Arrays na raiz (experience)
+        if (field.key === 'experience' && Array.isArray(field.value)) {
+          data.experience = field.value.map(() => ({
+            company: '',
+            role: '',
+            location: '',
+            period: '',
+            description: '',
+          }));
+        }
+      }
+    });
+    
+    // Garantir que todos os campos string da raiz sejam inicializados
+    Object.keys(template).forEach((key) => {
+      if (typeof template[key] === 'string' && !data.hasOwnProperty(key)) {
+        data[key] = '';
       }
     });
     
@@ -421,10 +497,9 @@ GitHub: {{github}}
     setShowPreview(true);
   };
 
-  const handleGeneratePDF = async () => {
+  const handleDownloadPDF = async (markdownToUse?: string, showStarAfter = false) => {
     try {
-      setIsGeneratingPDF(true);
-      const markdown = generateMarkdown();
+      const markdown = markdownToUse || generateMarkdown();
 
       // Chamar API para gerar PDF
       const response = await fetch('/api/generate-pdf', {
@@ -460,11 +535,34 @@ GitHub: {{github}}
       a.click();
       document.body.removeChild(a);
       window.URL.revokeObjectURL(url);
+
+      // Mostrar pedido de estrela após download bem-sucedido
+      if (showStarAfter) {
+        setTimeout(() => {
+          setShowStarRequest(true);
+        }, 1000);
+      }
     } catch (error) {
       console.error('Erro ao gerar PDF:', error);
       alert(`Erro ao gerar PDF: ${error instanceof Error ? error.message : 'Erro desconhecido'}`);
+    }
+  };
+
+  const handleGeneratePDF = async () => {
+    setIsGeneratingPDF(true);
+    try {
+      await handleDownloadPDF();
     } finally {
       setIsGeneratingPDF(false);
+    }
+  };
+
+  const handleDownloadFromPreview = async () => {
+    setIsDownloadingFromPreview(true);
+    try {
+      await handleDownloadPDF(markdownContent, true);
+    } finally {
+      setIsDownloadingFromPreview(false);
     }
   };
 
@@ -649,6 +747,47 @@ GitHub: {{github}}
       )}
 
 
+      {/* Modal de Solicitação de Estrela */}
+      {showStarRequest && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[70] p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6">
+            <div className="text-center">
+              <div className="mb-4">
+                <svg className="w-16 h-16 mx-auto text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                Gostou do resultado?
+              </h3>
+              <p className="text-gray-600 mb-6">
+                Se você gostou do currículo gerado, considere dar uma estrela ⭐ no GitHub para apoiar o projeto!
+              </p>
+              <div className="flex gap-3 justify-center">
+                <button
+                  onClick={() => setShowStarRequest(false)}
+                  className="px-6 py-2 text-gray-700 hover:text-gray-900 font-medium transition-colors border border-gray-300 rounded-lg hover:bg-gray-50"
+                >
+                  Talvez depois
+                </button>
+                <a
+                  href="https://github.com/dalmasjunior/curriculo"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setShowStarRequest(false)}
+                  className="px-6 py-2 bg-[#0033A0] text-white font-medium transition-colors rounded-lg hover:bg-[#002a8a] inline-flex items-center gap-2"
+                >
+                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.839 9.49.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.34-3.369-1.34-.454-1.156-1.11-1.463-1.11-1.463-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.203 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.167 22 16.418 22 12c0-5.523-4.477-10-10-10z"/>
+                  </svg>
+                  Dar uma estrela
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Modal de Preview */}
       {showPreview && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60] p-4">
@@ -691,13 +830,11 @@ GitHub: {{github}}
                 Fechar
               </button>
               <button
-                onClick={() => {
-                  // Função para download será implementada depois
-                  console.log('Download do currículo');
-                }}
-                className="px-6 py-2 bg-[#0033A0] text-white rounded-lg hover:bg-[#002a8a] transition-colors font-medium"
+                onClick={handleDownloadFromPreview}
+                disabled={isDownloadingFromPreview}
+                className="px-6 py-2 bg-[#0033A0] text-white rounded-lg hover:bg-[#002a8a] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Download
+                {isDownloadingFromPreview ? 'Gerando PDF...' : 'Download'}
               </button>
             </div>
           </div>
@@ -715,382 +852,270 @@ GitHub: {{github}}
               <p className="text-gray-600">{selectedModel.description}</p>
             </div>
             {/* Formulário do currículo */}
-            {modelTemplate && (
-              <div className="bg-white border-2 border-gray-200 rounded-xl p-8">
-                <form className="space-y-8">
-                  {/* Campos Básicos */}
-                  <section>
-                    <h2 className="text-2xl font-bold text-[#0033A0] mb-6">Informações Básicas</h2>
-                    <div className="grid md:grid-cols-2 gap-6">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Nome Completo *
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.name || ''}
-                          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033A0] focus:border-[#0033A0] outline-none"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Headline / Título Profissional *
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.headline || ''}
-                          onChange={(e) => setFormData({ ...formData, headline: e.target.value })}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033A0] focus:border-[#0033A0] outline-none"
-                          required
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Localização *
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.location || ''}
-                          onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033A0] focus:border-[#0033A0] outline-none"
-                          required
-                        />
-                      </div>
-                    </div>
-                  </section>
-
-                  {/* Contato */}
-                  {modelTemplate.contact && (
-                    <section>
-                      <h2 className="text-2xl font-bold text-[#0033A0] mb-6">Contato</h2>
-                      <div className="grid md:grid-cols-2 gap-6">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Email *
-                          </label>
-                          <input
-                            type="email"
-                            value={formData.contact?.email || ''}
-                            onChange={(e) => setFormData({
-                              ...formData,
-                              contact: { ...formData.contact, email: e.target.value }
-                            })}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033A0] focus:border-[#0033A0] outline-none"
-                            required
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Telefone
-                          </label>
-                          <input
-                            type="tel"
-                            value={formData.contact?.phone || ''}
-                            onChange={(e) => setFormData({
-                              ...formData,
-                              contact: { ...formData.contact, phone: e.target.value }
-                            })}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033A0] focus:border-[#0033A0] outline-none"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            LinkedIn
-                          </label>
-                          <input
-                            type="url"
-                            value={formData.contact?.linkedin || ''}
-                            onChange={(e) => setFormData({
-                              ...formData,
-                              contact: { ...formData.contact, linkedin: e.target.value }
-                            })}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033A0] focus:border-[#0033A0] outline-none"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">
-                            GitHub
-                          </label>
-                          <input
-                            type="url"
-                            value={formData.contact?.github || ''}
-                            onChange={(e) => setFormData({
-                              ...formData,
-                              contact: { ...formData.contact, github: e.target.value }
-                            })}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033A0] focus:border-[#0033A0] outline-none"
-                          />
-                        </div>
-                      </div>
-                    </section>
-                  )}
-
-                  {/* Resumo */}
-                  {modelTemplate.summary && (
-                    <section>
-                      <h2 className="text-2xl font-bold text-[#0033A0] mb-6">Resumo Profissional</h2>
-                      <textarea
-                        value={formData.summary || ''}
-                        onChange={(e) => setFormData({ ...formData, summary: e.target.value })}
-                        rows={5}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033A0] focus:border-[#0033A0] outline-none"
-                        placeholder="Descreva brevemente sua experiência e objetivos profissionais..."
-                      />
-                    </section>
-                  )}
-
-                  {/* Experiência Profissional (Array) */}
-                  {modelTemplate.experience && Array.isArray(modelTemplate.experience) && (
-                    <section>
-                      <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-2xl font-bold text-[#0033A0]">Experiência Profissional</h2>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const newExp = {
-                              company: '',
-                              role: '',
-                              location: '',
-                              period: '',
-                              description: '',
-                            };
-                            setFormData({
-                              ...formData,
-                              experience: [...(formData.experience || []), newExp]
-                            });
-                          }}
-                          className="px-4 py-2 bg-[#0033A0] text-white rounded-lg hover:bg-[#002a8a] transition-colors text-sm font-medium"
-                        >
-                          + Adicionar Experiência
-                        </button>
-                      </div>
-                      <div className="space-y-6">
-                        {(formData.experience || []).map((exp: any, index: number) => (
-                          <div key={index} className="border border-gray-200 rounded-lg p-6 relative">
-                            {formData.experience.length > 1 && (
+            {modelTemplate && (() => {
+              const fields = processTemplate(modelTemplate);
+              const rootFields = fields.filter(f => f.path.length === 1);
+              
+              return (
+                <div className="bg-white border-2 border-gray-200 rounded-xl p-8">
+                  <form className="space-y-8">
+                    {rootFields.map((field) => {
+                      // Renderizar campos string simples na raiz
+                      if (field.type === 'string') {
+                        const inputType = field.inputType || 'input';
+                        const fieldValue = formData[field.key] || '';
+                        
+                        return (
+                          <section key={field.key}>
+                            <h2 className="text-2xl font-bold text-[#0033A0] mb-6 capitalize">
+                              {field.key.replace(/_/g, ' ')}
+                            </h2>
+                            {inputType === 'textarea' ? (
+                              <textarea
+                                value={fieldValue}
+                                onChange={(e) => setFormData({ ...formData, [field.key]: e.target.value })}
+                                rows={field.key === 'summary' ? 5 : 4}
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033A0] focus:border-[#0033A0] outline-none"
+                                placeholder={field.key === 'education' ? 'Ex: Bacharelado em Ciência da Computação - Universidade XYZ (2015-2019)' : ''}
+                              />
+                            ) : (
+                              <input
+                                type="text"
+                                value={fieldValue}
+                                onChange={(e) => setFormData({ ...formData, [field.key]: e.target.value })}
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033A0] focus:border-[#0033A0] outline-none"
+                                required={['name', 'headline', 'location'].includes(field.key)}
+                              />
+                            )}
+                          </section>
+                        );
+                      }
+                      
+                      // Renderizar objeto contact
+                      if (field.type === 'object' && field.key === 'contact') {
+                        return (
+                          <section key={field.key}>
+                            <h2 className="text-2xl font-bold text-[#0033A0] mb-6">Contato</h2>
+                            <div className="grid md:grid-cols-2 gap-6">
+                              {['email', 'phone', 'linkedin', 'github'].map((contactKey) => (
+                                <div key={contactKey}>
+                                  <label className="block text-sm font-medium text-gray-700 mb-2 capitalize">
+                                    {contactKey === 'email' ? 'Email *' : contactKey === 'phone' ? 'Telefone' : contactKey}
+                                  </label>
+                                  <input
+                                    type={contactKey === 'email' ? 'email' : contactKey === 'phone' ? 'tel' : 'url'}
+                                    value={formData.contact?.[contactKey] || ''}
+                                    onChange={(e) => setFormData({
+                                      ...formData,
+                                      contact: { ...formData.contact, [contactKey]: e.target.value }
+                                    })}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033A0] focus:border-[#0033A0] outline-none"
+                                    required={contactKey === 'email'}
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          </section>
+                        );
+                      }
+                      
+                      // Renderizar objeto skills
+                      if (field.type === 'object' && field.key === 'skills') {
+                        return (
+                          <section key={field.key}>
+                            <div className="flex items-center justify-between mb-6">
+                              <h2 className="text-2xl font-bold text-[#0033A0]">Habilidades</h2>
                               <button
                                 type="button"
                                 onClick={() => {
-                                  const newExp = formData.experience.filter((_: any, i: number) => i !== index);
-                                  setFormData({ ...formData, experience: newExp });
+                                  const skillKey = prompt('Nome da categoria de habilidade (ex: languages, frameworks):');
+                                  if (skillKey && skillKey.trim()) {
+                                    setFormData({
+                                      ...formData,
+                                      skills: {
+                                        ...formData.skills,
+                                        [skillKey.trim()]: ''
+                                      }
+                                    });
+                                  }
                                 }}
-                                className="absolute top-4 right-4 text-red-500 hover:text-red-700"
+                                className="px-4 py-2 bg-[#0033A0] text-white rounded-lg hover:bg-[#002a8a] transition-colors text-sm font-medium"
                               >
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                </svg>
+                                + Adicionar Categoria
                               </button>
-                            )}
-                            <div className="grid md:grid-cols-2 gap-4">
-                              <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                  Empresa *
-                                </label>
-                                <input
-                                  type="text"
-                                  value={exp.company || ''}
-                                  onChange={(e) => {
-                                    const newExp = [...formData.experience];
-                                    newExp[index].company = e.target.value;
-                                    setFormData({ ...formData, experience: newExp });
-                                  }}
-                                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033A0] focus:border-[#0033A0] outline-none"
-                                  required
-                                />
-                              </div>
-                              <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                  Cargo *
-                                </label>
-                                <input
-                                  type="text"
-                                  value={exp.role || ''}
-                                  onChange={(e) => {
-                                    const newExp = [...formData.experience];
-                                    newExp[index].role = e.target.value;
-                                    setFormData({ ...formData, experience: newExp });
-                                  }}
-                                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033A0] focus:border-[#0033A0] outline-none"
-                                  required
-                                />
-                              </div>
-                              <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                  Localização
-                                </label>
-                                <input
-                                  type="text"
-                                  value={exp.location || ''}
-                                  onChange={(e) => {
-                                    const newExp = [...formData.experience];
-                                    newExp[index].location = e.target.value;
-                                    setFormData({ ...formData, experience: newExp });
-                                  }}
-                                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033A0] focus:border-[#0033A0] outline-none"
-                                />
-                              </div>
-                              <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                  Período *
-                                </label>
-                                <input
-                                  type="text"
-                                  value={exp.period || ''}
-                                  onChange={(e) => {
-                                    const newExp = [...formData.experience];
-                                    newExp[index].period = e.target.value;
-                                    setFormData({ ...formData, experience: newExp });
-                                  }}
-                                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033A0] focus:border-[#0033A0] outline-none"
-                                  placeholder="Ex: Jan 2020 - Dez 2022"
-                                  required
-                                />
-                              </div>
-                              <div className="md:col-span-2">
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                  Descrição
-                                </label>
-                                <textarea
-                                  value={exp.description || ''}
-                                  onChange={(e) => {
-                                    const newExp = [...formData.experience];
-                                    newExp[index].description = e.target.value;
-                                    setFormData({ ...formData, experience: newExp });
-                                  }}
-                                  rows={3}
-                                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033A0] focus:border-[#0033A0] outline-none"
-                                />
-                              </div>
                             </div>
-                          </div>
-                        ))}
-                      </div>
-                    </section>
-                  )}
-
-                  {/* Educação */}
-                  {modelTemplate.education && (
-                    <section>
-                      <h2 className="text-2xl font-bold text-[#0033A0] mb-6">Formação Acadêmica</h2>
-                      <textarea
-                        value={formData.education || ''}
-                        onChange={(e) => setFormData({ ...formData, education: e.target.value })}
-                        rows={4}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033A0] focus:border-[#0033A0] outline-none"
-                        placeholder="Ex: Bacharelado em Ciência da Computação - Universidade XYZ (2015-2019)"
-                      />
-                    </section>
-                  )}
-
-                  {/* Skills (Opcional - Dinâmico) */}
-                  {modelTemplate.skills && (
-                    <section>
-                      <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-2xl font-bold text-[#0033A0]">Habilidades</h2>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const skillKey = prompt('Nome da categoria de habilidade (ex: languages, frameworks):');
-                            if (skillKey && skillKey.trim()) {
-                              setFormData({
-                                ...formData,
-                                skills: {
-                                  ...formData.skills,
-                                  [skillKey.trim()]: ''
-                                }
-                              });
-                            }
-                          }}
-                          className="px-4 py-2 bg-[#0033A0] text-white rounded-lg hover:bg-[#002a8a] transition-colors text-sm font-medium"
-                        >
-                          + Adicionar Categoria
-                        </button>
-                      </div>
-                      <div className="grid md:grid-cols-2 gap-6">
-                        {formData.skills && Object.keys(formData.skills).map((skillKey) => (
-                          <div key={skillKey} className="relative">
-                            <label className="block text-sm font-medium text-gray-700 mb-2 capitalize">
-                              {skillKey.replace(/_/g, ' ')}
-                            </label>
-                            <input
-                              type="text"
-                              value={formData.skills[skillKey] || ''}
-                              onChange={(e) => setFormData({
-                                ...formData,
-                                skills: {
-                                  ...formData.skills,
-                                  [skillKey]: e.target.value
-                                }
-                              })}
-                              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033A0] focus:border-[#0033A0] outline-none pr-10"
-                              placeholder="Ex: JavaScript, Python, Java"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => {
-                                const newSkills = { ...formData.skills };
-                                delete newSkills[skillKey];
-                                setFormData({ ...formData, skills: newSkills });
-                              }}
-                              className="absolute right-2 top-9 text-red-500 hover:text-red-700"
-                            >
-                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                              </svg>
-                            </button>
-                          </div>
-                        ))}
-                      </div>
-                    </section>
-                  )}
-
-                  {/* Campos Opcionais Adicionais */}
-                  {modelTemplate && Object.keys(modelTemplate).filter(key => 
-                    !['name', 'headline', 'location', 'contact', 'summary', 'skills', 'experience', 'education'].includes(key) &&
-                    typeof modelTemplate[key] === 'string'
-                  ).map((key) => {
-                    const isVisible = formData.hasOwnProperty(key);
-                    return (
-                      <section key={key}>
-                        <div className="flex items-center justify-between mb-6">
-                          <h2 className="text-2xl font-bold text-[#0033A0] capitalize">
-                            {key.replace(/_/g, ' ')}
-                          </h2>
-                          {!isVisible ? (
-                            <button
-                              type="button"
-                              onClick={() => setFormData({ ...formData, [key]: '' })}
-                              className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors text-sm font-medium"
-                            >
-                              + Adicionar
-                            </button>
-                          ) : (
-                            <button
-                              type="button"
-                              onClick={() => {
-                                const newData = { ...formData };
-                                delete newData[key];
-                                setFormData(newData);
-                              }}
-                              className="px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors text-sm font-medium"
-                            >
-                              Remover
-                            </button>
-                          )}
-                        </div>
-                        {isVisible && (
-                          <textarea
-                            value={formData[key] || ''}
-                            onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
-                            rows={4}
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033A0] focus:border-[#0033A0] outline-none"
-                          />
-                        )}
-                      </section>
-                    );
-                  })}
+                            <div className="grid md:grid-cols-2 gap-6">
+                              {formData.skills && Object.keys(formData.skills).map((skillKey) => (
+                                <div key={skillKey} className="relative">
+                                  <label className="block text-sm font-medium text-gray-700 mb-2 capitalize">
+                                    {skillKey.replace(/_/g, ' ')}
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={formData.skills[skillKey] || ''}
+                                    onChange={(e) => setFormData({
+                                      ...formData,
+                                      skills: {
+                                        ...formData.skills,
+                                        [skillKey]: e.target.value
+                                      }
+                                    })}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033A0] focus:border-[#0033A0] outline-none pr-10"
+                                    placeholder="Ex: JavaScript, Python, Java"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const newSkills = { ...formData.skills };
+                                      delete newSkills[skillKey];
+                                      setFormData({ ...formData, skills: newSkills });
+                                    }}
+                                    className="absolute right-2 top-9 text-red-500 hover:text-red-700"
+                                  >
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          </section>
+                        );
+                      }
+                      
+                      // Renderizar array experience
+                      if (field.type === 'array' && field.key === 'experience') {
+                        return (
+                          <section key={field.key}>
+                            <div className="flex items-center justify-between mb-6">
+                              <h2 className="text-2xl font-bold text-[#0033A0]">Experiência Profissional</h2>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const newExp = {
+                                    company: '',
+                                    role: '',
+                                    location: '',
+                                    period: '',
+                                    description: '',
+                                  };
+                                  setFormData({
+                                    ...formData,
+                                    experience: [...(formData.experience || []), newExp]
+                                  });
+                                }}
+                                className="px-4 py-2 bg-[#0033A0] text-white rounded-lg hover:bg-[#002a8a] transition-colors text-sm font-medium"
+                              >
+                                + Adicionar Experiência
+                              </button>
+                            </div>
+                            <div className="space-y-6">
+                              {(formData.experience || []).map((exp: any, index: number) => (
+                                <div key={index} className="border border-gray-200 rounded-lg p-6 relative">
+                                  {formData.experience.length > 1 && (
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        const newExp = formData.experience.filter((_: any, i: number) => i !== index);
+                                        setFormData({ ...formData, experience: newExp });
+                                      }}
+                                      className="absolute top-4 right-4 text-red-500 hover:text-red-700"
+                                    >
+                                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                      </svg>
+                                    </button>
+                                  )}
+                                  <div className="grid md:grid-cols-2 gap-4">
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        Empresa *
+                                      </label>
+                                      <input
+                                        type="text"
+                                        value={exp.company || ''}
+                                        onChange={(e) => {
+                                          const newExp = [...formData.experience];
+                                          newExp[index].company = e.target.value;
+                                          setFormData({ ...formData, experience: newExp });
+                                        }}
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033A0] focus:border-[#0033A0] outline-none"
+                                        required
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        Cargo *
+                                      </label>
+                                      <input
+                                        type="text"
+                                        value={exp.role || ''}
+                                        onChange={(e) => {
+                                          const newExp = [...formData.experience];
+                                          newExp[index].role = e.target.value;
+                                          setFormData({ ...formData, experience: newExp });
+                                        }}
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033A0] focus:border-[#0033A0] outline-none"
+                                        required
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        Localização
+                                      </label>
+                                      <input
+                                        type="text"
+                                        value={exp.location || ''}
+                                        onChange={(e) => {
+                                          const newExp = [...formData.experience];
+                                          newExp[index].location = e.target.value;
+                                          setFormData({ ...formData, experience: newExp });
+                                        }}
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033A0] focus:border-[#0033A0] outline-none"
+                                      />
+                                    </div>
+                                    <div>
+                                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        Período *
+                                      </label>
+                                      <input
+                                        type="text"
+                                        value={exp.period || ''}
+                                        onChange={(e) => {
+                                          const newExp = [...formData.experience];
+                                          newExp[index].period = e.target.value;
+                                          setFormData({ ...formData, experience: newExp });
+                                        }}
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033A0] focus:border-[#0033A0] outline-none"
+                                        placeholder="Ex: Jan 2020 - Dez 2022"
+                                        required
+                                      />
+                                    </div>
+                                    <div className="md:col-span-2">
+                                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                                        Descrição
+                                      </label>
+                                      <textarea
+                                        value={exp.description || ''}
+                                        onChange={(e) => {
+                                          const newExp = [...formData.experience];
+                                          newExp[index].description = e.target.value;
+                                          setFormData({ ...formData, experience: newExp });
+                                        }}
+                                        rows={3}
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033A0] focus:border-[#0033A0] outline-none"
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </section>
+                        );
+                      }
+                      
+                      return null;
+                    })}
 
                   {/* Botão de Salvar/Exportar */}
                   <div className="flex justify-end gap-4 pt-6 border-t border-gray-200">
