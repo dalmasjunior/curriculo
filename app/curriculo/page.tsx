@@ -385,7 +385,7 @@ GitHub: {{github}}
             .replace(/\{\{exp\d+_description\}\}/g, exp.description || '');
           return expText;
         })
-        .join('\n\n');
+        .join('\n\n---\n\n');
 
       // Substituir todas as ocorrências de experiência no markdown
       markdown = markdown.replace(/### \{\{exp\d+_company\}\} — \{\{exp\d+_role\}\}[\s\S]*?(?=---|###|##|$)/g, '');
