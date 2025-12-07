@@ -15,6 +15,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Configurar marked para renderização adequada
+    marked.setOptions({
+      breaks: true, // Quebras de linha viram <br>
+      gfm: true, // GitHub Flavored Markdown
+    });
+
     // Converter markdown para HTML
     const html = await marked(markdown);
 
@@ -32,16 +38,16 @@ export async function POST(request: NextRequest) {
     }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-      line-height: 1.5;
+      line-height: 1.6;
       color: #000000;
       font-size: 11pt;
       max-width: 800px;
       margin: 0 auto;
-      padding: 20mm 15mm;
+      padding: 15mm;
     }
     h1 {
       font-size: 24pt;
-      font-weight: 600;
+      font-weight: bold;
       color: #000000;
       margin-bottom: 4pt;
       margin-top: 0;
@@ -49,20 +55,20 @@ export async function POST(request: NextRequest) {
     }
     h2 {
       font-size: 13pt;
-      font-weight: 600;
+      font-weight: bold;
       color: #000000;
-      margin-top: 16pt;
-      margin-bottom: 8pt;
+      margin-top: 18pt;
+      margin-bottom: 10pt;
       text-transform: uppercase;
       letter-spacing: 0.5pt;
       border-bottom: 1px solid #000000;
-      padding-bottom: 2pt;
+      padding-bottom: 4pt;
     }
     h3 {
-      font-size: 11pt;
-      font-weight: 600;
+      font-size: 12pt;
+      font-weight: bold;
       margin-top: 12pt;
-      margin-bottom: 4pt;
+      margin-bottom: 6pt;
       color: #000000;
     }
     p {
@@ -73,11 +79,10 @@ export async function POST(request: NextRequest) {
     }
     strong {
       font-weight: 600;
-      color: #000000;
     }
     hr {
       border: none;
-      border-top: 0.5pt solid #000000;
+      border-top: 0.5pt solid #ddd;
       margin: 12pt 0;
     }
     a {
@@ -87,34 +92,41 @@ export async function POST(request: NextRequest) {
     ul {
       margin-left: 20pt;
       margin-bottom: 6pt;
-      color: #000000;
     }
     li {
       margin-bottom: 3pt;
       line-height: 1.5;
-      color: #000000;
     }
-    /* Estilo para informações de contato no topo */
-    body > h1 + p,
-    body > h1 + p + p {
+    /* Estilo para informações de contato no topo - cada linha separada */
+    body > h1 ~ p {
       font-size: 10pt;
       margin-bottom: 2pt;
       line-height: 1.4;
+    }
+    /* Primeiro parágrafo após h1 (headline) */
+    body > h1 + p {
+      font-size: 11pt;
+      margin-bottom: 4pt;
+      font-weight: normal;
     }
     /* Espaçamento entre seções */
     h2 + p,
     h2 + h3 {
       margin-top: 8pt;
     }
-    /* Experiências */
+    /* Experiências - localização e período */
     h3 + p {
       font-size: 10pt;
       margin-bottom: 4pt;
-      color: #000000;
+      color: #666;
+      font-style: normal;
     }
+    /* Descrição da experiência */
     h3 + p + p {
-      margin-top: 4pt;
-      margin-bottom: 8pt;
+      margin-top: 6pt;
+      margin-bottom: 12pt;
+      font-size: 11pt;
+      line-height: 1.5;
     }
     @media print {
       body {
