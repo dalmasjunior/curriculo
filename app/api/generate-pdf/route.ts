@@ -24,138 +24,170 @@ export async function POST(request: NextRequest) {
     // Converter markdown para HTML
     const html = marked.parse(markdown);
 
-    // HTML completo com estilos para PDF (baseado no exemplo fornecido)
+    // HTML completo com estilos para PDF
     const fullHtml = `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
   <style>
-    * {
+    /* Base e impressão */
+    @page {
+      size: A4;
+      margin: 28mm 20mm;
+    }
+
+    html, body {
+      height: 100%;
       margin: 0;
       padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: #111;
+      background: #fff;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.22;
+      font-size: 12pt;
+    }
+
+    /* Contêiner principal para leitura */
+    main {
+      display: block;
+      width: 100%;
       box-sizing: border-box;
-    }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica', 'Arial', sans-serif;
-      line-height: 1.5;
-      color: #000000;
-      font-size: 16px;
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20mm 15mm;
-    }
-    h1 {
-      font-size: 2em;
-      font-weight: 600;
-      color: #000000;
-      margin: 0.67em 0 0.3em 0;
-      padding-bottom: 0;
-      border-bottom: none;
-      line-height: 1.25;
-    }
-    h2 {
-      font-size: 1.5em;
-      font-weight: 600;
-      color: #000000;
-      margin-top: 24px;
-      margin-bottom: 16px;
-      padding-bottom: 0.3em;
-      border-bottom: 1px solid #000000;
-      line-height: 1.25;
-      text-transform: uppercase;
-    }
-    h3 {
-      font-size: 1.25em;
-      font-weight: 600;
-      color: #000000;
-      margin-top: 24px;
-      margin-bottom: 16px;
-      line-height: 1.25;
-    }
-    p {
-      margin-top: 0;
-      margin-bottom: 10px;
-      line-height: 1.5;
-      font-size: 16px;
-      color: #000000;
-    }
-    strong {
-      font-weight: 600;
-      color: #000000;
-    }
-    hr {
-      box-sizing: content-box;
-      overflow: hidden;
-      background: transparent;
-      border-bottom: 1px solid #000000;
-      height: 0;
       padding: 0;
-      margin: 24px 0;
-      border: 0;
-      border-top: 1px solid #000000;
     }
-    a {
-      color: #000000;
-      text-decoration: none;
+
+    /* Cabeçalho com nome e contato */
+    h1 {
+      font-size: 20pt;
+      margin: 0 0 6px 0;
+      font-weight: 700;
+      letter-spacing: -0.2px;
     }
-    a:hover {
-      text-decoration: underline;
-      color: #000000;
+
+    p {
+      margin: 0 0 8px 0;
+      font-size: 11.2pt;
     }
-    a:visited {
-      color: #000000;
+
+    /* Subtítulos e seções */
+    h2 {
+      font-size: 12.5pt;
+      margin: 14px 0 8px 0;
+      font-weight: 700;
+      text-transform: none;
+      border-bottom: 1px solid #e6e6e6;
+      padding-bottom: 6px;
     }
-    ul {
-      margin-top: 0;
-      margin-bottom: 0;
-      padding-left: 2em;
-      list-style-type: disc;
+
+    h3 {
+      font-size: 11.5pt;
+      margin: 10px 0 6px 0;
+      font-weight: 600;
     }
+
+    /* Listas - simples e legíveis para ATS */
+    ul, ol {
+      margin: 6px 0 10px 18px;
+      padding: 0;
+    }
+
     li {
-      margin-top: 0;
-      margin-bottom: 0;
-      line-height: 1.5;
+      margin: 4px 0;
+      font-size: 11pt;
     }
-    li > p {
-      margin-top: 16px;
+
+    /* Destaques em linha */
+    strong {
+      font-weight: 700;
     }
-    li + li {
-      margin-top: 0.25em;
+
+    em {
+      font-style: italic;
     }
-    /* Primeiro parágrafo após h1 (headline e contato) */
-    body > h1 + p {
-      margin-top: 0;
-      margin-bottom: 10px;
-      font-size: 16px;
-      line-height: 1.5;
+
+    /* Blocos de experiência (empresa, cargo, período) */
+    section {
+      margin: 8px 0 12px 0;
     }
-    /* Espaçamento após HR */
-    hr + h2 {
-      margin-top: 24px;
+
+    /* Estilo para linhas de metadados (local, período, link) */
+    small {
+      display: inline-block;
+      font-size: 10pt;
+      color: #374151; /* cinza escuro neutro */
+      margin-left: 0;
     }
-    /* Parágrafo com período em negrito após h3 */
-    h3 + p {
-      margin-top: 0;
-      margin-bottom: 10px;
+
+    /* Links — visíveis, porém discretos */
+    a {
+      color: #0b6cff;
+      text-decoration: none;
+      border-bottom: 1px dotted rgba(11,108,255,0.15);
+      word-break: break-word;
+      font-size: 11pt;
     }
-    /* Lista após parágrafo de período */
-    h3 + p + ul {
-      margin-top: 0;
-      margin-bottom: 16px;
+
+    a:visited { color: #4b2b8d; }
+
+    /* Código ou blocos pré-formatados (se houver snippets no CV) */
+    pre, code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;
+      font-size: 10pt;
+      background: #f8f8f8;
+      padding: 6px 8px;
+      border-radius: 4px;
+      overflow-x: auto;
     }
+
+    /* Separador visual final */
+    hr {
+      border: none;
+      border-top: 1px solid #e6e6e6;
+      margin: 14px 0;
+    }
+
+    /* Footer menor com páginas (útil ao gerar PDF multi-page) */
+    footer {
+      display: block;
+      text-align: center;
+      font-size: 9pt;
+      color: #6b7280;
+      margin-top: 12px;
+    }
+
+    /* Forçar que seções não quebrem de forma ruim no PDF */
+    h2, h3 {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    section, p, ul, ol {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    /* Pequenos ajustes tipográficos para uma leitura densa */
+    blockquote {
+      margin: 8px 0;
+      padding-left: 12px;
+      border-left: 3px solid #e6e6e6;
+      color: #374151;
+    }
+
+    /* Imagens (ex.: avatar) — se houver, deixá-las discretas */
+    img {
+      max-width: 120px;
+      height: auto;
+      display: block;
+      margin: 6px 0;
+      border-radius: 6px;
+    }
+
+    /* Ajustes para impressão em preto e branco (fallback) */
     @media print {
-      body {
-        padding: 15mm;
-      }
-      h1, h2, h3 {
-        page-break-after: avoid;
-      }
-      h2 + h3 {
-        page-break-before: avoid;
-      }
-      ul {
-        page-break-inside: avoid;
-      }
+      a { color: #111; text-decoration: underline; }
+      img { -webkit-print-color-adjust: exact; }
     }
   </style>
 </head>
@@ -177,9 +209,9 @@ ${html}
     const pdf = await page.pdf({
       format: 'A4',
       margin: {
-        top: '20mm',
+        top: '28mm',
         right: '20mm',
-        bottom: '20mm',
+        bottom: '28mm',
         left: '20mm',
       },
       printBackground: true,
