@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     // Converter markdown para HTML
     const html = await marked(markdown);
 
-    // HTML completo com estilos para PDF (formato profissional, tudo em preto)
+    // HTML completo com estilos para PDF (baseado no exemplo fornecido)
     const fullHtml = `
 <!DOCTYPE html>
 <html>
@@ -37,110 +37,120 @@ export async function POST(request: NextRequest) {
       box-sizing: border-box;
     }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-      line-height: 1.6;
-      color: #000000;
-      font-size: 11pt;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica', 'Arial', sans-serif;
+      line-height: 1.5;
+      color: #24292f;
+      font-size: 16px;
       max-width: 800px;
       margin: 0 auto;
-      padding: 15mm;
+      padding: 20mm 15mm;
     }
     h1 {
-      font-size: 24pt;
-      font-weight: bold;
-      color: #000000;
-      margin-bottom: 4pt;
-      margin-top: 0;
-      line-height: 1.2;
+      font-size: 2em;
+      font-weight: 600;
+      color: #24292f;
+      margin: 0.67em 0;
+      padding-bottom: 0.3em;
+      border-bottom: 1px solid hsla(210, 18%, 87%, 1);
+      line-height: 1.25;
     }
     h2 {
-      font-size: 13pt;
-      font-weight: bold;
-      color: #000000;
-      margin-top: 18pt;
-      margin-bottom: 10pt;
-      text-transform: uppercase;
-      letter-spacing: 0.5pt;
-      border-bottom: 1px solid #000000;
-      padding-bottom: 4pt;
+      font-size: 1.5em;
+      font-weight: 600;
+      color: #24292f;
+      margin-top: 24px;
+      margin-bottom: 16px;
+      padding-bottom: 0.3em;
+      border-bottom: 1px solid hsla(210, 18%, 87%, 1);
+      line-height: 1.25;
     }
     h3 {
-      font-size: 12pt;
-      font-weight: bold;
-      margin-top: 12pt;
-      margin-bottom: 6pt;
-      color: #000000;
+      font-size: 1.25em;
+      font-weight: 600;
+      color: #24292f;
+      margin-top: 24px;
+      margin-bottom: 16px;
+      line-height: 1.25;
     }
     p {
-      margin-bottom: 6pt;
+      margin-top: 0;
+      margin-bottom: 10px;
       line-height: 1.5;
-      font-size: 11pt;
-      color: #000000;
+      font-size: 16px;
+      color: #24292f;
     }
     strong {
       font-weight: 600;
+      color: #24292f;
     }
     hr {
-      border: none;
-      border-top: 0.5pt solid #ddd;
-      margin: 12pt 0;
+      box-sizing: content-box;
+      overflow: hidden;
+      background: transparent;
+      border-bottom: 1px solid hsla(210, 18%, 87%, 1);
+      height: 0.25em;
+      padding: 0;
+      margin: 24px 0;
+      background-color: #d0d7de;
+      border: 0;
     }
     a {
-      color: #000000;
+      color: #0969da;
       text-decoration: none;
     }
+    a:hover {
+      text-decoration: underline;
+    }
     ul {
-      margin-left: 20pt;
-      margin-bottom: 6pt;
+      margin-top: 0;
+      margin-bottom: 0;
+      padding-left: 2em;
+      list-style-type: disc;
     }
     li {
-      margin-bottom: 3pt;
+      margin-top: 0;
+      margin-bottom: 0;
       line-height: 1.5;
     }
-    /* Estilo para informações de contato no topo - cada linha separada */
-    body > h1 ~ p {
-      font-size: 10pt;
-      margin-bottom: 2pt;
-      line-height: 1.4;
+    li > p {
+      margin-top: 16px;
     }
-    /* Primeiro parágrafo após h1 (headline) */
+    li + li {
+      margin-top: 0.25em;
+    }
+    /* Primeiro parágrafo após h1 (headline e contato) */
     body > h1 + p {
-      font-size: 11pt;
-      margin-bottom: 4pt;
-      font-weight: normal;
-    }
-    /* Espaçamento entre seções */
-    h2 + p,
-    h2 + h3 {
-      margin-top: 8pt;
-    }
-    /* Experiências - localização e período */
-    h3 + p {
-      font-size: 10pt;
-      margin-bottom: 4pt;
-      color: #666;
-      font-style: normal;
-    }
-    /* Descrição da experiência */
-    h3 + p + p {
-      margin-top: 6pt;
-      margin-bottom: 12pt;
-      font-size: 11pt;
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 16px;
       line-height: 1.5;
+    }
+    /* Espaçamento após HR */
+    hr + h2 {
+      margin-top: 24px;
+    }
+    /* Parágrafo com período em negrito após h3 */
+    h3 + p {
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+    /* Lista após parágrafo de período */
+    h3 + p + ul {
+      margin-top: 0;
+      margin-bottom: 16px;
     }
     @media print {
       body {
         padding: 15mm;
       }
-      h2 {
-        page-break-after: avoid;
-        margin-top: 12pt;
-      }
-      h3 {
+      h1, h2, h3 {
         page-break-after: avoid;
       }
       h2 + h3 {
         page-break-before: avoid;
+      }
+      ul {
+        page-break-inside: avoid;
       }
     }
   </style>
