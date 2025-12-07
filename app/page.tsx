@@ -1,63 +1,72 @@
-import Image from "next/image";
-
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="min-h-screen bg-white">
+      <main className="container mx-auto px-4 py-16 max-w-4xl">
+        {/* Header Section */}
+        <div className="text-center mb-16">
+          <h1 className="text-5xl font-bold text-[#0033A0] mb-4">
+            Gerador de Currículos ATS
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="text-xl text-gray-700 max-w-2xl mx-auto">
+            Crie currículos profissionais compatíveis com sistemas ATS de forma gratuita e fácil
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
+
+        {/* Presentation Section */}
+        <div className="bg-gray-50 rounded-2xl p-8 mb-12 shadow-sm">
+          <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+            Sobre o Projeto
+          </h2>
+          <div className="space-y-4 text-gray-700 leading-relaxed">
+            <p>
+              Bem-vindo ao nosso gerador de currículos gratuito! Nosso objetivo é ajudar você a criar currículos profissionais que sejam facilmente lidos e processados pelos sistemas ATS (Applicant Tracking Systems) usados pelas empresas.
+            </p>
+            <p>
+              Com nosso serviço, você pode criar currículos otimizados que aumentam suas chances de passar pela triagem inicial e chegar até os recrutadores. Tudo isso de forma completamente gratuita e sem complicações.
+            </p>
+            <p className="font-medium text-[#0033A0]">
+              Comece agora mesmo escolhendo uma das opções abaixo:
+            </p>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
           <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/curriculo"
+            className="group relative bg-[#0033A0] text-white rounded-xl px-8 py-12 shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-[#002a8a] transform hover:-translate-y-1 block"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
+            <div className="flex flex-col items-center gap-4">
+              <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-bold">Novo Currículo</h3>
+              <p className="text-white/90 text-sm">
+                Crie um novo currículo do zero
+              </p>
+            </div>
           </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+          <button className="group relative bg-white border-2 border-[#0033A0] text-[#0033A0] rounded-xl px-8 py-12 shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-[#0033A0] hover:text-white transform hover:-translate-y-1">
+            <div className="flex flex-col items-center gap-4">
+              <div className="w-16 h-16 bg-[#0033A0]/10 rounded-full flex items-center justify-center group-hover:bg-white/20 group-hover:scale-110 transition-all">
+                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v7a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-3zM14 16a1 1 0 011-1h4a1 1 0 011 1v3a1 1 0 01-1 1h-4a1 1 0 01-1-1v-3z" />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-bold">Novo Modelo</h3>
+              <p className="text-sm opacity-90 group-hover:opacity-100">
+                Escolha um modelo de currículo
+              </p>
+            </div>
+          </button>
+        </div>
+
+        {/* Footer Info */}
+        <div className="text-center mt-12 text-gray-500 text-sm">
+          <p>Serviço 100% gratuito • Sem cadastro necessário • Compatível com ATS</p>
         </div>
       </main>
     </div>
