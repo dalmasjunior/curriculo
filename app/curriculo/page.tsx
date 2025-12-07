@@ -117,7 +117,7 @@ export default function CurriculoPage() {
           data[field.key] = '';
         }
       } else if (field.type === 'object' && field.path.length === 1) {
-        // Objetos na raiz (contact, skills)
+        // Objetos na raiz (contact, skills, e objetos customizados)
         if (field.key === 'contact') {
           data.contact = {
             email: '',
@@ -130,6 +130,14 @@ export default function CurriculoPage() {
           if (field.value && typeof field.value === 'object') {
             Object.keys(field.value).forEach((key) => {
               data.skills[key] = '';
+            });
+          }
+        } else {
+          // Objetos customizados genéricos
+          data[field.key] = {};
+          if (field.value && typeof field.value === 'object') {
+            Object.keys(field.value).forEach((key) => {
+              data[field.key][key] = '';
             });
           }
         }
@@ -147,7 +155,7 @@ export default function CurriculoPage() {
       }
     });
     
-    // Garantir que todos os campos string da raiz sejam inicializados
+    // Garantir que todos os campos string da raiz sejam inicializados (fallback)
     Object.keys(template).forEach((key) => {
       if (typeof template[key] === 'string' && !data.hasOwnProperty(key)) {
         data[key] = '';
@@ -852,7 +860,7 @@ GitHub: {{github}}
                       // Renderizar campos string simples na raiz
                       if (field.type === 'string') {
                         const inputType = field.inputType || 'input';
-                        const fieldValue = formData[field.key] || '';
+                        const fieldValue = formData[field.key] ?? '';
                         
                         return (
                           <section key={field.key}>
@@ -900,6 +908,39 @@ GitHub: {{github}}
                                     })}
                                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033A0] focus:border-[#0033A0] outline-none"
                                     required={contactKey === 'email'}
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          </section>
+                        );
+                      }
+                      
+                      // Renderizar objetos customizados genéricos (não contact, não skills)
+                      if (field.type === 'object' && field.key !== 'contact' && field.key !== 'skills') {
+                        const customObject = formData[field.key] || {};
+                        return (
+                          <section key={field.key}>
+                            <h2 className="text-2xl font-bold text-[#0033A0] mb-6 capitalize">
+                              {field.key.replace(/_/g, ' ')}
+                            </h2>
+                            <div className="grid md:grid-cols-2 gap-6">
+                              {Object.keys(customObject).map((subKey) => (
+                                <div key={subKey}>
+                                  <label className="block text-sm font-medium text-gray-700 mb-2 capitalize">
+                                    {subKey.replace(/_/g, ' ')}
+                                  </label>
+                                  <input
+                                    type="text"
+                                    value={customObject[subKey] || ''}
+                                    onChange={(e) => setFormData({
+                                      ...formData,
+                                      [field.key]: {
+                                        ...customObject,
+                                        [subKey]: e.target.value
+                                      }
+                                    })}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0033A0] focus:border-[#0033A0] outline-none"
                                   />
                                 </div>
                               ))}
