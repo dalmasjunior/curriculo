@@ -19,11 +19,10 @@ export async function POST(request: NextRequest) {
     });
 
     // Converter markdown para HTML
-    const html = await marked(markdown);
+    const html = marked.parse(markdown);
 
     // HTML completo com estilos para PDF (baseado no exemplo fornecido)
-    const fullHtml = `
-<!DOCTYPE html>
+    const fullHtml = `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="UTF-8">
@@ -153,10 +152,12 @@ export async function POST(request: NextRequest) {
   </style>
 </head>
 <body>
-  ${html}
+${html}
 </body>
-</html>
-    `;
+</html>`;
+
+    // Garantir que fullHtml é uma string
+    const htmlString = String(fullHtml);
 
     // Enviar HTML para o serviço externo markdowntopdf.com
     const response = await fetch('https://www.markdowntopdf.com/api/guest/download', {
@@ -165,7 +166,7 @@ export async function POST(request: NextRequest) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        html: fullHtml,
+        html: htmlString,
       }),
     });
 
