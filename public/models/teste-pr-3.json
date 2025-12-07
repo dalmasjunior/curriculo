@@ -1,0 +1,37 @@
+{
+    "name": "{{name}}",
+    "headline": "{{headline}}",
+    "location": "{{location}}",
+
+    "contact": {
+        "email": "{{email}}",
+        "phone": "{{phone}}",
+        "linkedin": "{{linkedin}}",
+        "github": "{{github}}"
+    },
+    "bagaca": "{{bagaca}}",
+    "summary": "{{summary}}",
+    "skills": {
+        "languages": "{{skills_languages}}",
+        "frameworks": "{{skills_frameworks}}",
+        "cloud": "{{skills_cloud}}",
+        "observability": "{{skills_observability}}"
+    },
+    "experience": [
+        {
+            "company": "{{exp1_company}}",
+            "role": "{{exp1_role}}",
+            "location": "{{exp1_location}}",
+            "period": "{{exp1_period}}",
+            "description": "{{exp1_description}}"
+        },
+        {
+            "company": "{{exp2_company}}",
+            "role": "{{exp2_role}}",
+            "location": "{{exp2_location}}",
+            "period": "{{exp2_period}}",
+            "description": "{{exp2_description}}"
+        }
+    ],
+    "education": "{{education}}"
+}
