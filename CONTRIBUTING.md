@@ -1,53 +1,53 @@
-# Guia de Contribuição
+# Contributing Guide
 
-Obrigado por considerar contribuir com o projeto! Este documento fornece diretrizes e informações sobre como contribuir.
+Thank you for considering contributing to the project! This document provides guidelines and information on how to contribute.
 
-## 🤝 Como Contribuir
+## 🤝 How to Contribute
 
-Existem várias formas de contribuir:
+There are several ways to contribute:
 
-- 🐛 Reportar bugs
-- 💡 Sugerir novas funcionalidades
-- 📝 Melhorar a documentação
-- 🎨 Criar novos modelos de currículo
-- 💻 Adicionar novas funcionalidades
-- 🔧 Corrigir bugs
+- 🐛 Report bugs
+- 💡 Suggest new features
+- 📝 Improve documentation
+- 🎨 Create new resume templates
+- 💻 Add new features
+- 🔧 Fix bugs
 
-## 🚀 Primeiros Passos
+## 🚀 Getting Started
 
-1. **Fork o repositório**
-   - Clique no botão "Fork" no topo da página do GitHub
+1. **Fork the repository**
+   - Click the "Fork" button at the top of the GitHub page
 
-2. **Clone seu fork**
+2. **Clone your fork**
    ```bash
-   git clone https://github.com/SEU_USUARIO/curriculo.git
+   git clone https://github.com/YOUR_USERNAME/curriculo.git
    cd curriculo
    ```
 
-3. **Crie uma branch para sua contribuição**
+3. **Create a branch for your contribution**
    ```bash
-   git checkout -b minha-contribuicao
+   git checkout -b my-contribution
    ```
 
-4. **Siga o guia de instalação**
-   - Consulte o [INSTALL.md](./INSTALL.md) para configurar o ambiente
+4. **Follow the installation guide**
+   - Check [INSTALL.md](./INSTALL.md) to set up the environment
 
-## 📝 Processo de Contribuição
+## 📝 Contribution Process
 
-### 1. Criar um Novo Modelo de Currículo
+### 1. Create a New Resume Template
 
-A forma mais fácil de contribuir é criando um novo modelo de currículo:
+The easiest way to contribute is by creating a new resume template:
 
-1. Acesse `/editor` na aplicação
-2. Preencha as informações do modelo
-3. Crie a estrutura JSON do modelo
-4. Crie o template Markdown
-5. Use o botão "Visualizar" para testar
-6. Envie via Pull Request
+1. Go to `/editor` in the application
+2. Fill in the template information
+3. Create the JSON structure of the template
+4. Create the Markdown template
+5. Use the "Preview" button to test
+6. Submit via Pull Request
 
-#### Estrutura de um Modelo
+#### Template Structure
 
-**JSON (`modelo.json`):**
+**JSON (`template.json`):**
 ```json
 {
   "name": "{{name}}",
@@ -70,7 +70,7 @@ A forma mais fácil de contribuir é criando um novo modelo de currículo:
 }
 ```
 
-**Markdown (`modelo.md`):**
+**Markdown (`template.md`):**
 ```markdown
 # {{name}}
 {{headline}}
@@ -91,114 +91,114 @@ Phone: {{phone}}
 {{education}}
 ```
 
-### 2. Reportar Bugs
+### 2. Report Bugs
 
-Ao reportar um bug, inclua:
+When reporting a bug, include:
 
-- Descrição clara do problema
-- Passos para reproduzir
-- Comportamento esperado vs. comportamento atual
-- Screenshots (se aplicável)
-- Ambiente (navegador, sistema operacional, versão do Node.js)
+- Clear description of the problem
+- Steps to reproduce
+- Expected behavior vs. actual behavior
+- Screenshots (if applicable)
+- Environment (browser, operating system, Node.js version)
 
-### 3. Sugerir Funcionalidades
+### 3. Suggest Features
 
-Ao sugerir uma nova funcionalidade:
+When suggesting a new feature:
 
-- Descreva claramente a funcionalidade
-- Explique o caso de uso
-- Discuta possíveis implementações (se tiver ideias)
+- Clearly describe the feature
+- Explain the use case
+- Discuss possible implementations (if you have ideas)
 
-### 4. Contribuir com Código
+### 4. Contribute Code
 
-#### Padrões de Código
+#### Code Standards
 
 - Use TypeScript
-- Siga as convenções do ESLint configuradas
-- Escreva código limpo e legível
-- Adicione comentários quando necessário
-- Mantenha funções pequenas e focadas
+- Follow the configured ESLint conventions
+- Write clean and readable code
+- Add comments when necessary
+- Keep functions small and focused
 
-#### Estrutura de Commits
+#### Commit Structure
 
-Use mensagens de commit descritivas:
+Use descriptive commit messages:
 
 ```
-feat: adiciona nova funcionalidade de exportação
-fix: corrige bug na geração de PDF
-docs: atualiza documentação de instalação
-style: ajusta formatação do código
-refactor: reorganiza estrutura de componentes
-test: adiciona testes para nova funcionalidade
+feat: add new export functionality
+fix: fix PDF generation bug
+docs: update installation documentation
+style: adjust code formatting
+refactor: reorganize component structure
+test: add tests for new feature
 ```
 
-#### Processo de Pull Request
+#### Pull Request Process
 
-1. **Certifique-se de que seu código funciona**
+1. **Make sure your code works**
    ```bash
    npm run build
    npm run lint
    ```
 
-2. **Teste localmente**
-   - Execute `npm run dev`
-   - Teste todas as funcionalidades relacionadas
+2. **Test locally**
+   - Run `npm run dev`
+   - Test all related functionality
 
-3. **Commit suas mudanças**
+3. **Commit your changes**
    ```bash
    git add .
-   git commit -m "feat: descrição da mudança"
+   git commit -m "feat: description of change"
    ```
 
-4. **Push para seu fork**
+4. **Push to your fork**
    ```bash
-   git push origin minha-contribuicao
+   git push origin my-contribution
    ```
 
-5. **Abra um Pull Request**
-   - Vá para o repositório original no GitHub
-   - Clique em "New Pull Request"
-   - Selecione sua branch
-   - Descreva suas mudanças claramente
+5. **Open a Pull Request**
+   - Go to the original repository on GitHub
+   - Click "New Pull Request"
+   - Select your branch
+   - Clearly describe your changes
 
-## 📋 Checklist para Pull Requests
+## 📋 Pull Request Checklist
 
-Antes de enviar um PR, certifique-se de:
+Before submitting a PR, make sure:
 
-- [ ] Código compila sem erros (`npm run build`)
-- [ ] Não há erros de lint (`npm run lint`)
-- [ ] Funcionalidade testada localmente
-- [ ] Documentação atualizada (se necessário)
-- [ ] Mensagens de commit descritivas
-- [ ] PR descrito claramente
+- [ ] Code compiles without errors (`npm run build`)
+- [ ] No linting errors (`npm run lint`)
+- [ ] Functionality tested locally
+- [ ] Documentation updated (if necessary)
+- [ ] Descriptive commit messages
+- [ ] PR clearly described
 
-## 🎨 Criando Modelos de Currículo
+## 🎨 Creating Resume Templates
 
-### Diretrizes para Modelos
+### Template Guidelines
 
-1. **Compatibilidade ATS**
-   - Use formatação simples e clara
-   - Evite tabelas complexas
-   - Use palavras-chave relevantes
+1. **ATS Compatibility**
+   - Use simple and clear formatting
+   - Avoid complex tables
+   - Use relevant keywords
 
-2. **Design Profissional**
-   - Mantenha o layout limpo
-   - Use hierarquia visual clara
-   - Garanta boa legibilidade
+2. **Professional Design**
+   - Keep layout clean
+   - Use clear visual hierarchy
+   - Ensure good readability
 
-3. **Flexibilidade**
-   - Permita campos opcionais
-   - Suporte diferentes quantidades de experiência
-   - Seja adaptável a diferentes perfis
+3. **Flexibility**
+   - Allow optional fields
+   - Support different amounts of experience
+   - Be adaptable to different profiles
 
-### Campos Suportados
+### Supported Fields
 
-- **Campos simples**: `name`, `headline`, `location`, `summary`, `education`
-- **Objetos**: `contact` (email, phone, linkedin, github), `skills` (dinâmico)
+- **Simple fields**: `name`, `headline`, `location`, `summary`, `education`
+- **Objects**: `contact` (email, phone, linkedin, github), `skills` (dynamic)
 - **Arrays**: `experience` (company, role, location, period, description)
-- **Campos customizados**: Qualquer campo adicional é suportado automaticamente
+- **Custom fields**: Any additional field is automatically supported
 
-### Exemplo de Campo Customizado
+### Custom Field Example
 
 ```json
 {
@@ -210,33 +210,32 @@ Antes de enviar um PR, certifique-se de:
 }
 ```
 
-## 🧪 Testando
+## 🧪 Testing
 
-Antes de enviar um PR:
+Before submitting a PR:
 
-1. Teste todas as funcionalidades relacionadas
-2. Verifique em diferentes navegadores (Chrome, Firefox, Safari)
-3. Teste a geração de PDF
-4. Verifique a responsividade em mobile
+1. Test all related functionality
+2. Check in different browsers (Chrome, Firefox, Safari)
+3. Test PDF generation
+4. Verify mobile responsiveness
 
-## 📚 Recursos Úteis
+## 📚 Useful Resources
 
 - [Next.js Documentation](https://nextjs.org/docs)
 - [TypeScript Handbook](https://www.typescriptlang.org/docs/)
 - [Tailwind CSS Documentation](https://tailwindcss.com/docs)
 - [Markdown Guide](https://www.markdownguide.org/)
 
-## 💬 Comunicação
+## 💬 Communication
 
-- Use Issues para discussões sobre bugs e funcionalidades
-- Seja respeitoso e construtivo
-- Ajude outros contribuidores quando possível
+- Use Issues for discussions about bugs and features
+- Be respectful and constructive
+- Help other contributors when possible
 
-## 🙏 Agradecimentos
+## 🙏 Acknowledgments
 
-Todas as contribuições são valiosas! Obrigado por ajudar a tornar este projeto melhor.
+All contributions are valuable! Thank you for helping make this project better.
 
 ---
 
-**Dúvidas?** Abra uma Issue ou entre em contato com os mantenedores do projeto.
-
+**Questions?** Open an Issue or contact the project maintainers.

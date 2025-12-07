@@ -1,51 +1,51 @@
 [![Netlify Status](https://api.netlify.com/api/v1/badges/e2422e7d-1c42-4c8d-acda-0508bbda1fa3/deploy-status)](https://app.netlify.com/projects/curriculo-ats-free/deploys)
 
-# Gerador de Currículos ATS
+# ATS Resume Generator
 
-Um gerador de currículos gratuito e open-source que cria currículos profissionais compatíveis com sistemas ATS (Applicant Tracking Systems).
+A free and open-source resume generator that creates professional resumes compatible with ATS (Applicant Tracking Systems).
 
-## 📋 Sobre o Projeto
+## 📋 About the Project
 
-Este projeto foi desenvolvido para ajudar profissionais a criarem currículos otimizados que sejam facilmente lidos e processados pelos sistemas ATS usados pelas empresas durante o processo de recrutamento.
+This project was developed to help professionals create optimized resumes that are easily read and processed by ATS systems used by companies during the recruitment process.
 
-### ✨ Principais Funcionalidades
+### ✨ Key Features
 
-- **Criação de Currículos**: Interface intuitiva para preencher informações profissionais
-- **Múltiplos Modelos**: Diferentes templates de currículo disponíveis
-- **Compatibilidade ATS**: Currículos otimizados para passar pela triagem automática
-- **Geração de PDF**: Exporte seu currículo em formato PDF profissional
-- **Modelos Customizáveis**: Sistema flexível que permite criar novos modelos de currículo
-- **Editor de Modelos**: Interface para criar e contribuir com novos templates via Pull Request
+- **Resume Creation**: Intuitive interface to fill in professional information
+- **Multiple Templates**: Different resume templates available
+- **ATS Compatibility**: Resumes optimized to pass automatic screening
+- **PDF Generation**: Export your resume in professional PDF format
+- **Customizable Templates**: Flexible system that allows creating new resume models
+- **Template Editor**: Interface to create and contribute new templates via Pull Request
 
-### 🎯 Objetivo
+### 🎯 Goal
 
-Aumentar as chances dos candidatos passarem pela triagem inicial dos sistemas ATS, chegando até os recrutadores humanos. Tudo isso de forma completamente gratuita e sem complicações.
+Increase candidates' chances of passing the initial ATS screening, reaching human recruiters. All of this completely free and without complications.
 
-## 🚀 Tecnologias Utilizadas
+## 🚀 Technologies Used
 
-- **Next.js 16** - Framework React para aplicações web
-- **TypeScript** - Tipagem estática para JavaScript
-- **Tailwind CSS** - Framework CSS utilitário
-- **Puppeteer** - Geração de PDFs
-- **Marked** - Processamento de Markdown
+- **Next.js 16** - React framework for web applications
+- **TypeScript** - Static typing for JavaScript
+- **Tailwind CSS** - Utility-first CSS framework
+- **Puppeteer** - PDF generation
+- **Marked** - Markdown processing
 
-## 📚 Documentação
+## 📚 Documentation
 
-- [Guia de Instalação](./INSTALL.md) - Como configurar e executar o projeto localmente
-- [Guia de Contribuição](./CONTRIBUTING.md) - Como contribuir com o projeto
+- [Installation Guide](./INSTALL.md) - How to set up and run the project locally
+- [Contributing Guide](./CONTRIBUTING.md) - How to contribute to the project
 
-## 🌟 Contribuindo
+## 🌟 Contributing
 
-Contribuições são bem-vindas! Se você tem uma ideia para melhorar o projeto ou quer adicionar um novo modelo de currículo, confira nosso [guia de contribuição](./CONTRIBUTING.md).
+Contributions are welcome! If you have an idea to improve the project or want to add a new resume template, check out our [contributing guide](./CONTRIBUTING.md).
 
-## 📄 Licença
+## 📄 License
 
-Este projeto é open-source e está disponível gratuitamente para uso.
+This project is open-source and freely available for use.
 
-## 🙏 Agradecimentos
+## 🙏 Acknowledgments
 
-Agradecemos a todos os contribuidores que ajudam a tornar este projeto melhor!
+We thank all contributors who help make this project better!
 
 ---
 
-⭐ Se este projeto foi útil para você, considere dar uma estrela no GitHub!
+⭐ If this project was useful to you, consider giving it a star on GitHub!

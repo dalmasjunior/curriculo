@@ -1,95 +1,95 @@
-# Guia de Instalação
+# Installation Guide
 
-Este guia irá ajudá-lo a configurar e executar o projeto localmente.
+This guide will help you set up and run the project locally.
 
-## 📋 Pré-requisitos
+## 📋 Prerequisites
 
-Antes de começar, certifique-se de ter instalado:
+Before you begin, make sure you have installed:
 
-- **Node.js** (versão 18 ou superior)
-- **npm** ou **yarn** ou **pnpm** ou **bun**
+- **Node.js** (version 18 or higher)
+- **npm** or **yarn** or **pnpm** or **bun**
 - **Git**
 
-## 🚀 Instalação
+## 🚀 Installation
 
-### 1. Clone o repositório
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/dalmasjunior/curriculo.git
 cd curriculo
 ```
 
-### 2. Instale as dependências
+### 2. Install dependencies
 
 ```bash
 npm install
-# ou
+# or
 yarn install
-# ou
+# or
 pnpm install
-# ou
+# or
 bun install
 ```
 
-### 3. Configure as variáveis de ambiente
+### 3. Configure environment variables
 
-Crie um arquivo `.env.local` na raiz do projeto:
+Create a `.env.local` file in the project root:
 
 ```env
-# Token do GitHub (opcional - necessário apenas para criar modelos via PR)
-# Crie um Personal Access Token em: https://github.com/settings/tokens
-# Permissões necessárias: repo (acesso completo ao repositório)
+# GitHub Token (optional - required only for creating models via PR)
+# Create a Personal Access Token at: https://github.com/settings/tokens
+# Required permissions: repo (full repository access)
 GITHUB_TOKEN=your_github_token_here
 
-# Informações do repositório (opcional, usa valores padrão se não especificado)
+# Repository information (optional, uses default values if not specified)
 GITHUB_REPO_OWNER=dalmasjunior
 GITHUB_REPO_NAME=curriculo
 GITHUB_BASE_BRANCH=main
 ```
 
-> **Nota**: As variáveis de ambiente são opcionais. O projeto funciona sem elas, mas a funcionalidade de criar novos modelos via Pull Request requer o `GITHUB_TOKEN`.
+> **Note**: Environment variables are optional. The project works without them, but the functionality to create new models via Pull Request requires `GITHUB_TOKEN`.
 
-### 4. Execute o servidor de desenvolvimento
+### 4. Run the development server
 
 ```bash
 npm run dev
-# ou
+# or
 yarn dev
-# ou
+# or
 pnpm dev
-# ou
+# or
 bun dev
 ```
 
-### 5. Acesse a aplicação
+### 5. Access the application
 
-Abra [http://localhost:3000](http://localhost:3000) no seu navegador.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## 🛠️ Scripts Disponíveis
+## 🛠️ Available Scripts
 
-### Desenvolvimento
+### Development
 
 ```bash
 npm run dev
 ```
 
-Inicia o servidor de desenvolvimento na porta 3000.
+Starts the development server on port 3000.
 
-### Build de Produção
+### Production Build
 
 ```bash
 npm run build
 ```
 
-Cria uma versão otimizada da aplicação para produção.
+Creates an optimized version of the application for production.
 
-### Iniciar em Produção
+### Start Production Server
 
 ```bash
 npm run start
 ```
 
-Inicia o servidor de produção (requer build prévio).
+Starts the production server (requires previous build).
 
 ### Linting
 
@@ -97,101 +97,100 @@ Inicia o servidor de produção (requer build prévio).
 npm run lint
 ```
 
-Executa o linter para verificar problemas no código.
+Runs the linter to check for code issues.
 
-## 🔧 Configuração do GitHub Token (Opcional)
+## 🔧 GitHub Token Configuration (Optional)
 
-Se você quiser usar a funcionalidade de criar modelos via Pull Request:
+If you want to use the functionality to create models via Pull Request:
 
-1. Acesse [GitHub Settings > Developer settings > Personal access tokens > Tokens (classic)](https://github.com/settings/tokens)
-2. Clique em "Generate new token (classic)"
-3. Dê um nome descritivo (ex: "Curriculo App PR Creator")
-4. Selecione a permissão `repo` (acesso completo ao repositório)
-5. Clique em "Generate token"
-6. Copie o token e adicione no arquivo `.env.local`:
+1. Go to [GitHub Settings > Developer settings > Personal access tokens > Tokens (classic)](https://github.com/settings/tokens)
+2. Click "Generate new token (classic)"
+3. Give it a descriptive name (e.g., "Curriculo App PR Creator")
+4. Select the `repo` permission (full repository access)
+5. Click "Generate token"
+6. Copy the token and add it to the `.env.local` file:
 
 ```env
-GITHUB_TOKEN=seu_token_aqui
+GITHUB_TOKEN=your_token_here
 ```
 
-## 🐛 Solução de Problemas
+## 🐛 Troubleshooting
 
-### Erro ao instalar dependências
+### Error installing dependencies
 
-Se encontrar erros durante a instalação:
+If you encounter errors during installation:
 
 ```bash
-# Limpe o cache do npm
+# Clear npm cache
 npm cache clean --force
 
-# Delete node_modules e reinstale
+# Delete node_modules and reinstall
 rm -rf node_modules package-lock.json
 npm install
 ```
 
-### Erro ao gerar PDF
+### Error generating PDF
 
-A geração de PDF requer o Puppeteer. Se houver problemas:
+PDF generation requires Puppeteer. If there are issues:
 
-- Certifique-se de que todas as dependências do sistema estão instaladas
-- O Puppeteer baixa automaticamente o Chromium necessário
+- Make sure all system dependencies are installed
+- Puppeteer automatically downloads the required Chromium
 
-### Porta 3000 já em uso
+### Port 3000 already in use
 
-Se a porta 3000 estiver ocupada, você pode usar outra porta:
+If port 3000 is occupied, you can use another port:
 
 ```bash
 PORT=3001 npm run dev
 ```
 
-## 📦 Estrutura do Projeto
+## 📦 Project Structure
 
 ```
 curriculo/
-├── app/                    # Aplicação Next.js
-│   ├── api/               # Rotas da API
-│   ├── curriculo/         # Página de criação de currículo
-│   ├── editor/            # Editor de modelos
-│   └── page.tsx           # Página inicial
-├── public/                # Arquivos estáticos
-│   └── models/            # Modelos de currículo
-├── .env.local             # Variáveis de ambiente (criar)
-└── package.json           # Dependências do projeto
+├── app/                    # Next.js application
+│   ├── api/               # API routes
+│   ├── curriculo/         # Resume creation page
+│   ├── editor/            # Template editor
+│   └── page.tsx           # Home page
+├── public/                # Static files
+│   └── models/           # Resume templates
+├── .env.local             # Environment variables (create)
+└── package.json          # Project dependencies
 ```
 
-## 🚀 Deploy
+## 🚀 Deployment
 
-### Vercel (Recomendado)
+### Vercel (Recommended)
 
-O projeto está otimizado para deploy na Vercel:
+The project is optimized for deployment on Vercel:
 
-1. Faça push do código para o GitHub
-2. Importe o projeto na [Vercel](https://vercel.com)
-3. Configure as variáveis de ambiente
-4. Deploy automático!
+1. Push your code to GitHub
+2. Import the project on [Vercel](https://vercel.com)
+3. Configure environment variables
+4. Automatic deployment!
 
-### Outras Plataformas
+### Other Platforms
 
-O projeto pode ser deployado em qualquer plataforma que suporte Next.js:
+The project can be deployed on any platform that supports Next.js:
 - Netlify
 - Railway
 - AWS
 - Google Cloud Platform
 - Azure
 
-## 📝 Próximos Passos
+## 📝 Next Steps
 
-Após a instalação, você pode:
+After installation, you can:
 
-- Explorar os modelos disponíveis em `/curriculo`
-- Criar um novo modelo em `/editor`
-- Verificar o [guia de contribuição](./CONTRIBUTING.md) para contribuir com o projeto
+- Explore available templates at `/curriculo`
+- Create a new template at `/editor`
+- Check the [contributing guide](./CONTRIBUTING.md) to contribute to the project
 
-## ❓ Precisa de Ajuda?
+## ❓ Need Help?
 
-Se você encontrar problemas ou tiver dúvidas:
+If you encounter problems or have questions:
 
-1. Verifique os [Issues](https://github.com/dalmasjunior/curriculo/issues) existentes
-2. Crie um novo Issue descrevendo o problema
-3. Consulte a documentação do [Next.js](https://nextjs.org/docs)
-
+1. Check existing [Issues](https://github.com/dalmasjunior/curriculo/issues)
+2. Create a new Issue describing the problem
+3. Consult the [Next.js documentation](https://nextjs.org/docs)

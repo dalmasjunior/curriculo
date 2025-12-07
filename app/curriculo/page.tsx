@@ -242,8 +242,6 @@ GitHub: {{github}}
     
     Promise.all([jsonPromise, mdPromise])
       .then(([template, mdTemplate]) => {
-        console.log('Template carregado:', template);
-        console.log('Markdown template carregado:', mdTemplate.substring(0, 100));
         setModelTemplate(template);
         setMarkdownTemplate(mdTemplate);
         initializeFormData(template);
@@ -285,7 +283,6 @@ GitHub: {{github}}
     }
 
     let markdown = markdownTemplate;
-    console.log('Template original:', markdownTemplate.substring(0, 200));
 
     // Substituir campos básicos (remover seções vazias)
     markdown = markdown.replace(/\{\{name\}\}/g, formData.name || '');
@@ -428,10 +425,7 @@ GitHub: {{github}}
   };
 
   const handlePreview = () => {
-    console.log('FormData:', formData);
-    console.log('MarkdownTemplate:', markdownTemplate);
     const markdown = generateMarkdown();
-    console.log('Markdown gerado:', markdown.substring(0, 200));
     setMarkdownContent(markdown);
     setShowPreview(true);
   };
