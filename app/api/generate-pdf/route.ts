@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
 
     // Converter markdown para HTML
     const html = marked.parse(markdown);
-
+    console.log(html);
     // HTML completo com estilos para PDF
     const fullHtml = `<!DOCTYPE html>
 <html>
@@ -33,20 +33,62 @@ export async function POST(request: NextRequest) {
     /* Base e impressão */
     @page {
       size: A4;
-      margin: 28mm 20mm;
+      margin: 10mm 10mm;
     }
 
+    --color-prettylights-syntax-comment: #6e7781;
+        --color-prettylights-syntax-constant: #0550ae;
+        --color-prettylights-syntax-entity: #8250df;
+        --color-prettylights-syntax-storage-modifier-import: #24292f;
+        --color-prettylights-syntax-entity-tag: #116329;
+        --color-prettylights-syntax-keyword: #cf222e;
+        --color-prettylights-syntax-string: #0a3069;
+        --color-prettylights-syntax-variable: #953800;
+        --color-prettylights-syntax-brackethighlighter-unmatched: #82071e;
+        --color-prettylights-syntax-invalid-illegal-text: #f6f8fa;
+        --color-prettylights-syntax-invalid-illegal-bg: #82071e;
+        --color-prettylights-syntax-carriage-return-text: #f6f8fa;
+        --color-prettylights-syntax-carriage-return-bg: #cf222e;
+        --color-prettylights-syntax-string-regexp: #116329;
+        --color-prettylights-syntax-markup-list: #3b2300;
+        --color-prettylights-syntax-markup-heading: #0550ae;
+        --color-prettylights-syntax-markup-italic: #24292f;
+        --color-prettylights-syntax-markup-bold: #24292f;
+        --color-prettylights-syntax-markup-deleted-text: #82071e;
+        --color-prettylights-syntax-markup-deleted-bg: #FFEBE9;
+        --color-prettylights-syntax-markup-inserted-text: #116329;
+        --color-prettylights-syntax-markup-inserted-bg: #dafbe1;
+        --color-prettylights-syntax-markup-changed-text: #953800;
+        --color-prettylights-syntax-markup-changed-bg: #ffd8b5;
+        --color-prettylights-syntax-markup-ignored-text: #eaeef2;
+        --color-prettylights-syntax-markup-ignored-bg: #0550ae;
+        --color-prettylights-syntax-meta-diff-range: #8250df;
+        --color-prettylights-syntax-brackethighlighter-angle: #57606a;
+        --color-prettylights-syntax-sublimelinter-gutter-mark: #8c959f;
+        --color-prettylights-syntax-constant-other-reference-link: #0a3069;
+        --color-fg-default: #24292f;
+        --color-fg-muted: #57606a;
+        --color-fg-subtle: #6e7781;
+        --color-canvas-default: #ffffff;
+        --color-canvas-subtle: #f6f8fa;
+        --color-border-default: #d0d7de;
+        --color-border-muted: hsla(210,18%,87%,1);
+        --color-neutral-muted: rgba(175,184,193,.2);
+        --color-accent-fg: #0969da;
+        --color-accent-emphasis: #0969da;
+        --color-attention-subtle: #fff8c5;
+        --color-danger-fg: #cf222e
+
     html, body {
-      height: 100%;
+      -ms-text-size-adjust: 100%;
+      -webkit-text-size-adjust: 100%;
       margin: 0;
-      padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      color: #111;
-      background: #fff;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-      line-height: 1.22;
-      font-size: 12pt;
+      color: #24292f;
+      background-color: #ffffff;
+      font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+      font-size: 16px;
+      line-height: 1.5;
+      word-wrap: break-word
     }
 
     /* Contêiner principal para leitura */
@@ -59,10 +101,11 @@ export async function POST(request: NextRequest) {
 
     /* Cabeçalho com nome e contato */
     h1 {
-      font-size: 20pt;
-      margin: 0 0 6px 0;
-      font-weight: 700;
-      letter-spacing: -0.2px;
+      margin: .67em 0;
+      font-weight: 600;
+      padding-bottom: .3em;
+      font-size: 2em;
+      border-bottom: 1px solid hsla(210,18%,87%,1);
     }
 
     p {
@@ -72,12 +115,10 @@ export async function POST(request: NextRequest) {
 
     /* Subtítulos e seções */
     h2 {
-      font-size: 12.5pt;
-      margin: 14px 0 8px 0;
-      font-weight: 700;
-      text-transform: none;
-      border-bottom: 1px solid #e6e6e6;
-      padding-bottom: 6px;
+      font-weight: 600;
+      padding-bottom: .3em;
+      font-size: 1.5em;
+      border-bottom: 1px solid hsla(210,18%,87%,1)
     }
 
     h3 {
@@ -121,11 +162,9 @@ export async function POST(request: NextRequest) {
 
     /* Links — visíveis, porém discretos */
     a {
-      color: #0b6cff;
+      background-color: transparent;
+      color: #0969da;
       text-decoration: none;
-      border-bottom: 1px dotted rgba(11,108,255,0.15);
-      word-break: break-word;
-      font-size: 11pt;
     }
 
     a:visited { color: #4b2b8d; }
@@ -142,9 +181,15 @@ export async function POST(request: NextRequest) {
 
     /* Separador visual final */
     hr {
-      border: none;
-      border-top: 1px solid #e6e6e6;
-      margin: 14px 0;
+      box-sizing: content-box;
+      overflow: hidden;
+      background: transparent;
+      border-bottom: 1px solid hsla(210,18%,87%,1);
+      height: .25em;
+      padding: 0;
+      margin: 24px 0;
+      background-color: #d0d7de;
+      border: 0
     }
 
     /* Footer menor com páginas (útil ao gerar PDF multi-page) */
@@ -169,10 +214,10 @@ export async function POST(request: NextRequest) {
 
     /* Pequenos ajustes tipográficos para uma leitura densa */
     blockquote {
-      margin: 8px 0;
-      padding-left: 12px;
-      border-left: 3px solid #e6e6e6;
-      color: #374151;
+      margin: 0;
+      padding: 0 1em;
+      color: #57606a;
+      border-left: .25em solid #d0d7de
     }
 
     /* Imagens (ex.: avatar) — se houver, deixá-las discretas */
@@ -182,6 +227,12 @@ export async function POST(request: NextRequest) {
       display: block;
       margin: 6px 0;
       border-radius: 6px;
+    }
+
+    h6 {
+      font-weight: 600;
+      font-size: .85em;
+      color: #57606a;
     }
 
     /* Ajustes para impressão em preto e branco (fallback) */

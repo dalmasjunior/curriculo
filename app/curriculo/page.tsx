@@ -337,16 +337,17 @@ GitHub: {{github}}
         const skillsMatch = markdown.match(skillsSectionRegex);
         
         if (skillsMatch) {
-          // Criar lista dinâmica de skills preenchidas
+          // Criar lista dinâmica de skills preenchidas como parágrafo único
+          // Usar HTML <br> para quebras de linha dentro do parágrafo
           const skillsList = filledSkills
             .map(([key, value]) => {
               const skillName = key.replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase());
-              return `**${skillName}:** ${value}`;
+              return `<strong>${skillName}:</strong> ${value}`;
             })
-            .join('\n');
+            .join('<br>');
           
-          // Substituir toda a seção de skills
-          const newSkillsSection = `## Core Skills\n${skillsList}\n`;
+          // Substituir toda a seção de skills com parágrafo HTML (evitar interpretação como H2 pelo marked)
+          const newSkillsSection = `## Core Skills\n\n<p>${skillsList}</p>\n\n`;
           markdown = markdown.replace(skillsSectionRegex, newSkillsSection);
         }
       } else {
