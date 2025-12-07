@@ -33,51 +33,47 @@ export default function CurriculoPage() {
   const initializeFormData = (template: any) => {
     const data: any = {};
     
-    // Campos básicos (com valores de teste)
-    if (template.name) data.name = 'João Silva';
-    if (template.headline) data.headline = 'Desenvolvedor Full Stack';
-    if (template.location) data.location = 'São Paulo, SP, Brasil';
-    if (template.summary) data.summary = 'Desenvolvedor com mais de 5 anos de experiência em desenvolvimento web, especializado em React, Node.js e arquiteturas cloud. Apaixonado por criar soluções escaláveis e eficientes.';
-    if (template.education) data.education = 'Bacharelado em Ciência da Computação - Universidade de São Paulo (2015-2019)';
+    // Campos básicos (vazios)
+    if (template.name) data.name = '';
+    if (template.headline) data.headline = '';
+    if (template.location) data.location = '';
+    if (template.summary) data.summary = '';
+    if (template.education) data.education = '';
     
-    // Contact (com valores de teste)
+    // Contact (vazio)
     if (template.contact) {
       data.contact = {
-        email: 'joao.silva@email.com',
-        phone: '+55 11 98765-4321',
-        linkedin: 'https://linkedin.com/in/joaosilva',
-        github: 'https://github.com/joaosilva',
+        email: '',
+        phone: '',
+        linkedin: '',
+        github: '',
       };
     }
     
-    // Skills (opcional - com valores de teste)
+    // Skills (vazio)
     if (template.skills) {
       data.skills = {};
       Object.keys(template.skills).forEach((key) => {
-        if (key === 'languages') data.skills[key] = 'JavaScript, TypeScript, Python, Java';
-        else if (key === 'frameworks') data.skills[key] = 'React, Next.js, Node.js, Express';
-        else if (key === 'cloud') data.skills[key] = 'AWS, Docker, Kubernetes';
-        else if (key === 'observability') data.skills[key] = 'Prometheus, Grafana, ELK Stack';
-        else data.skills[key] = 'Skill exemplo';
+        data.skills[key] = '';
       });
     }
     
-    // Experience (array - com valores de teste)
+    // Experience (array vazio)
     if (template.experience && Array.isArray(template.experience)) {
-      data.experience = template.experience.map((_: any, index: number) => ({
-        company: `Empresa ${index + 1}`,
-        role: `Desenvolvedor ${index === 0 ? 'Sênior' : 'Pleno'}`,
-        location: 'São Paulo, SP',
-        period: `${2020 + index}/01 - ${2022 + index}/12`,
-        description: `Responsável pelo desenvolvimento e manutenção de aplicações web utilizando React e Node.js. Trabalhei em projetos de grande escala, colaborando com equipes multidisciplinares.`,
+      data.experience = template.experience.map(() => ({
+        company: '',
+        role: '',
+        location: '',
+        period: '',
+        description: '',
       }));
     }
     
-    // Campos opcionais adicionais
+    // Campos opcionais adicionais (vazios)
     Object.keys(template).forEach((key) => {
       if (!['name', 'headline', 'location', 'contact', 'summary', 'skills', 'experience', 'education'].includes(key)) {
         if (typeof template[key] === 'string') {
-          data[key] = 'Valor de exemplo para campo opcional';
+          data[key] = '';
         }
       }
     });
