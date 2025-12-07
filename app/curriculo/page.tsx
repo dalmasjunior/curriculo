@@ -774,6 +774,19 @@ GitHub: {{github}}
 
       {/* Conteúdo Principal (quando modelo for selecionado) */}
       <div className="container mx-auto px-4 py-8">
+        {/* Botão Voltar */}
+        <div className="max-w-4xl mx-auto mb-4">
+          <button
+            onClick={() => router.push('/')}
+            className="text-[#0033A0] hover:text-[#002a8a] flex items-center gap-2 transition-colors"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            Voltar para página inicial
+          </button>
+        </div>
+
         {selectedModel && (
           <div className="max-w-4xl mx-auto">
             <div className="bg-gray-50 rounded-xl p-6 mb-6">
