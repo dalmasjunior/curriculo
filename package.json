@@ -9,13 +9,18 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "mdpdfmake": "^1.0.8",
     "next": "16.0.7",
+    "pdfmake": "^0.2.20",
+    "pdfmake-fonts": "^0.0.1",
+    "puppeteer": "^24.32.0",
     "react": "19.2.0",
     "react-dom": "19.2.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/pdfmake": "^0.2.12",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",

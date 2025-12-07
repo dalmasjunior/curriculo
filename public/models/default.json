@@ -13,7 +13,6 @@
         "languages": "{{skills_languages}}",
         "frameworks": "{{skills_frameworks}}",
         "cloud": "{{skills_cloud}}",
-        "blockchain": "{{skills_blockchain}}",
         "observability": "{{skills_observability}}"
     },
     "experience": [
@@ -32,6 +31,5 @@
             "description": "{{exp2_description}}"
         }
     ],
-    "education": "{{education}}",
-    "blockchain_expertise": "{{blockchain_expertise}}"
+    "education": "{{education}}"
 }
